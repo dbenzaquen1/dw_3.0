@@ -1,0 +1,131 @@
+version: 2
+tests:
+  - name: valid_email_format
+    description: >
+      Validates that the given column contains properly formatted email addresses.
+      Uses a regex to check for standard email patterns (e.g., name@domain.com).
+  - name: effective_end_date_null
+    description: >
+      Validates that the specified column (typically an effective end date) is not null or an empty string.
+      Useful for ensuring data integrity in date ranges where an end date is required.
+
+macros:
+    - name: extract_user
+      description: This macro extracts the user information from the entaio raw user string.
+      arguments: 
+      - name: raw_user
+        description: The raw entaio user string.
+        type: string
+
+    - name: extract_workstation
+      description: This macro extracts the workstation information from the entaio raw user string.
+      arguments:
+      - name: raw_user
+        description: The raw entaio user string.
+        type: string
+    - name: calc_linear_feet
+      description: >
+        Calculates the estimated linear feet based on available dimensional and weight data.
+        This macro is located in math_utils.sql and is used for material length calculations in inventory and production reporting.
+      arguments:
+        - name: pieces
+          description: The number of individual material units or sheets. Used in all calculation paths.
+          type: numeric
+        - name: width
+          description: The width of the material, in inches. Used to calculate area or volume.
+          type: numeric
+        - name: length
+          description: The length of the material, in inches. Used to calculate area or volume.
+          type: numeric
+        - name: weight
+          description: The weight of the material, in pounds. Used in weight-based calculations.
+          type: numeric
+        - name: density
+          description: The density of the material, in pounds per cubic inch. Used in weight-based calculations.
+          type: numeric
+        - name: gauge
+          description: The gauge of the material, in inches. Used in weight-based calculations.
+          type: numeric
+    - name: ton_to_cwt
+      description: >
+        Converts a per-ton value to per-hundredweight (CWT). 1 ton = 20 CWT.
+        This macro is located in math_utils.sql and is useful for price/unit conversions in steel and commodity pricing.
+      arguments:
+        - name: per_ton_value
+          description: The value per ton to be converted to per CWT.
+          type: numeric
+    - name: week_end_date
+      description: >
+        Returns the ISO week end date (Sunday) for a string like '2020W26'.
+        Useful for converting ISO week strings to a standard date for reporting and analysis.
+      arguments:
+        - name: week_string
+          description: A string in the format 'YYYYWww', where YYYY is the year and ww is the ISO week number.
+          type: string
+    - name: month_end_date
+      description: >
+        Returns the last date of the month for a string like '2023M10'.
+        Useful for converting year-month strings to a standard date for reporting and analysis.
+      arguments:
+        - name: month_string
+          description: A string in the format 'YYYYMmm', where YYYY is the year and mm is the month number.
+          type: string
+    - name: quarter_end_date
+      description: >
+        Returns the last date of the quarter for a string like '2025Q1'.
+        Useful for converting year-quarter strings to a standard date for reporting and analysis.
+      arguments:
+        - name: quarter_string
+          description: A string in the format 'YYYYQq', where YYYY is the year and q is the quarter number (1-4).
+          type: string
+    - name: cwt_to_ton
+      description: >
+        Converts a per-hundredweight (CWT) value to per-ton. 1 CWT = 0.05 ton.
+        This macro is located in math_utils.sql and is useful for price/unit conversions in steel and commodity pricing.
+      arguments:
+        - name: per_cwt_value
+          description: The value per CWT to be converted to per ton.
+          type: numeric
+    - name: ton_to_pound
+      description: >
+        Converts a per-ton value to per-pound. 1 ton = 2000 pounds.
+        This macro is located in math_utils.sql and is useful for price/unit conversions in steel and commodity pricing.
+      arguments:
+        - name: per_ton_value
+          description: The value per ton to be converted to per pound.
+          type: numeric
+    - name: pound_to_ton
+      description: >
+        Converts a per-pound value to per-ton. 1 pound = 0.0005 ton.
+        This macro is located in math_utils.sql and is useful for price/unit conversions in steel and commodity pricing.
+      arguments:
+        - name: per_pound_value
+          description: The value per pound to be converted to per ton.
+          type: numeric
+    - name: cwt_to_pound
+      description: >
+        Converts a per-hundredweight (CWT) value to per-pound. 1 CWT = 20 pounds.
+        This macro is located in math_utils.sql and is useful for price/unit conversions in steel and commodity pricing.
+      arguments:
+        - name: per_cwt_value
+          description: The value per CWT to be converted to per pound.
+          type: numeric
+    - name: year_end_date
+      description: >
+        Returns the last date of the year for a string like '2025'.
+        Useful for converting year strings to a standard date for reporting and analysis.
+      arguments:
+        - name: year_string
+          description: A string representing the year (e.g., '2025').
+          type: string
+    - name: combine_date_and_time
+      description: >
+        Combines a date column and a time column into a single TIMESTAMP value.
+        If the time value is NULL, defaults to midnight (00:00:00).
+      arguments:
+        - name: date_var
+          description: The date column or value.
+          type: date
+        - name: time_var
+          description: The time column or value. NULL values default to midnight.
+          type: time

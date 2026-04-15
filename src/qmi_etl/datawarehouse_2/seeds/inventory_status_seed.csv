@@ -1,0 +1,8 @@
+status_code,description
+I,Inventory
+W,Work in Progress
+S,Oversold
+T,In Transit
+P,Purchase Order
+E,Est. Drop to Stock
+Q,QC Hold

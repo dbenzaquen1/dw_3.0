@@ -1,0 +1,4 @@
+location,cost,effective_start_timestamp,effective_end_timestamp
+NLMK,50,2025-06-01,1900-01-01
+nucor_hickman,1,2025-06-01,1900-01-01
+nucor_gallatin,.25,2025-06-01,1900-01-01

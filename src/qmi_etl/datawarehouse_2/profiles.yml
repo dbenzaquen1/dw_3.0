@@ -1,0 +1,15 @@
+# dbt profile for Dagster. Credentials: the dbt asset sets DBT_BIGQUERY_KEYFILE
+# from BIGQUERY_SERVICE_ACCOUNT_CREDENTIALS before running (same as BQ IO manager).
+
+datawarehouse_2:
+  target: dev
+  outputs:
+    dev:
+      type: bigquery
+      method: service-account
+      # Set by dbt asset at runtime from BIGQUERY_SERVICE_ACCOUNT_CREDENTIALS; default for parse/compile only
+      keyfile: "{{ env_var('DBT_BIGQUERY_KEYFILE', '') }}"
+      project: "{{ env_var('GCP_PROJECT_ID', 'quality-metals-prod') }}"
+      dataset: "{{ env_var('BQ_DATASET', 'dagster') }}"
+      location: "{{ env_var('BQ_LOCATION', 'US') }}"
+      threads: 4

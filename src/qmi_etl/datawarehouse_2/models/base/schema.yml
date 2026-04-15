@@ -1,0 +1,2318 @@
+version: 2
+
+models:
+  - name: base_salesperson
+    description: This is the base table for salesperson.
+
+    columns:
+      - name: salesperson_id
+        description: This is a unique identifier for a salesperson.
+        tests:
+          - unique
+          - not_null
+
+      - name: credit_limit
+        description: This is the salesperson's max credit limit.
+
+      - name: first_name
+        description: The salesperson's first name.
+
+      - name: last_name
+        description: The salesperson's last name.
+      - name: full_name
+        description: The salesperson's first and last name.
+      - name: email
+        description: The email associated with the salesperson.
+      - name: is_active
+        description: A flag indicating if the salesperson is an active employee.
+
+  - name: base_order_line
+    description: Formatted and enriched view of order lines.
+    columns:
+      - name: order_id
+        description: Unique identifier for the order.
+        tests:
+          - not_null
+      - name: item_id
+        description: Unique identifier for the item.
+        tests:
+          - not_null
+      - name: line_id
+        description: Unique identifier for the line item.
+      - name: inventory_id
+        description: Inventory identifier associated with the item.
+      - name: process_id
+        description: Identifier for the process linked to the order.
+      - name: tax_id
+        description: Tax identifier.
+      - name: customer_id
+        description: Customer identifier associated with the order.
+      - name: reserve_item_id
+        description: Identifier for reserved item.
+      - name: cancel_reason_id
+        description: Reason code for cancellation.
+      - name: cancel_comment_id
+        description: Comment identifier for cancellation.
+
+      # Fact columns
+      - name: price
+        description: Price of the item.
+      - name: order_qty
+        description: Ordered quantity.
+      - name: width
+        description: Width of the item.
+      - name: length
+        description: Length of the item.
+      - name: pieces_amount
+        description: Number of pieces in the order.
+      - name: weight
+        description: Weight of the item.
+      - name: tax_amount
+        description: Tax amount for the item.
+      - name: cost_amount
+        description: Cost amount for the item.
+      - name: sale_amount
+        description: Sales amount for the item.
+      - name: net_weight
+        description: Net weight of the item.
+      - name: gross_weight
+        description: Gross weight of the item.
+      - name: billed_pieces
+        description: Number of pieces billed.
+      - name: billed_weight
+        description: Weight billed.
+
+      # Dimension columns
+      - name: gauge_max
+        description: Maximum gauge value.
+      - name: gauge_min
+        description: Minimum gauge value.
+      - name: thickness
+        description: Thickness of the item.
+      - name: tax_exempt_code
+        description: Code for tax exemption.
+      - name: item_description
+        description: Description of the item.
+      - name: reserve_width
+        description: Reserved width.
+
+      # Date columns
+      - name: order_date
+        description: Date of the order.
+      - name: due_date
+        description: Due date for the order.
+      - name: ship_date
+        description: Ship date for the order.
+
+
+
+  
+  
+
+  - name: base_customer
+    description: A table that contains the flattened data from the Customer table. It includes customer information, contact details, and associated metadata.
+    columns:
+      - name: customer_id
+        description: The unique identifier for the customer.
+        tests:
+          - unique
+          - not_null
+
+      - name: route_id
+        description: The identifier for the customer's route.
+
+      - name: region_id
+        description: The identifier for the customer's region.
+
+      - name: tax_code
+        description: The tax code associated with the customer.
+
+      - name: address_id
+        description: The unique identifier for the customer's address.
+
+      - name: customer_fax
+        description: The fax number associated with the customer.
+
+      - name: customer_name
+        description: The name of the customer.
+
+      - name: customer_phone
+        description: The phone number of the customer.
+
+      - name: customer_email
+        description: The email address of the customer.
+
+      - name: customer_website
+        description: The website URL of the customer.
+
+      - name: customer_comments
+        description: Additional comments related to the customer.
+
+      - name: fax_invoice
+        description: The fax number associated with the customer for invoicing .
+
+      - name: email_invoice
+        description: The email associated with the customer for invoicing .
+      - name: credit_limit
+        description: The customer's credit limit.
+
+      - name: customer_code
+        description: A unique code associated with the customer.
+
+      - name: salesperson_1
+        description: The first salesperson assigned to the customer.
+
+      - name: salesperson_2
+        description: The second salesperson assigned to the customer.
+
+      - name: sales_comments
+        description: Comments related to the customer's sales history.
+      - name: customer_create_date
+        description: The date the customer was created.
+      - name: has_statement
+        description: A flag indicating whether the customer has a statement.
+      - name: exempt_reason_code
+        description: Reason code for tax exemption.
+      - name: terms_id
+        description: Payment terms identifier (foreign key to base_customer_terms).
+  - name: base_inventory
+    description: Base inventory model with normalized inventory attributes from the Inventory source.
+    columns:
+      - name: inventory_id
+        description: Unique identifier for the inventory record.
+      - name: tag_id
+        description: Inventory tag/index number.
+      - name: warehouse_id
+        description: Warehouse identifier where the inventory is stored.
+      - name: vendor_id
+        description: Vendor identifier associated with the inventory item.
+      - name: gauge_id
+        description: Gauge identifier for the material.
+      - name: po_number
+        description: Purchase order number linked to the inventory record.
+      - name: po_line
+        description: Purchase order line number linked to the inventory record.
+      - name: item_id
+        description: Item identifier for the inventory record.
+      - name: location_id
+        description: Storage location identifier.
+      - name: parent_inventory_id
+        description: Parent inventory ID for child inventory records; null when source value is 0.
+      - name: piw
+        description: PIW value from the source inventory record.
+      - name: feet
+        description: Feet quantity for the inventory record.
+      - name: length
+        description: Length of the inventory item.
+      - name: pieces
+        description: Piece count for the inventory record.
+      - name: weight
+        description: Weight of the inventory record.
+      - name: freight
+        description: Freight amount/cost associated with the inventory.
+      - name: qty
+        description: Quantity value from source `Qty`.
+      - name: qty_on_order
+        description: Quantity currently on order.
+      - name: feet_on_order
+        description: Feet currently on order.
+      - name: weight_on_order
+        description: Weight currently on order.
+      - name: weight_reserved_hard
+        description: Hard-reserved weight amount.
+      - name: cost
+        description: Actual average cost for the inventory record.
+      - name: status_code
+        description: Inventory status code; uses `Q` when HoldForInspection is true, otherwise SourceCode.
+      - name: classification_id
+        description: Inventory classification identifier.
+      - name: customer_id_reserved
+        description: Reserved customer ID for the inventory row; set to null when the source value is 0.
+      - name: is_customer_reserved
+        description: Boolean flag indicating whether the inventory row is reserved for a customer (true when customer_id_reserved is non-zero in source).
+      - name: item_number
+        description: Item number for the inventory record.
+      - name: mic_1
+        description: First micrometer measurement.
+      - name: mic_2
+        description: Second micrometer measurement.
+      - name: width
+        description: Width of the inventory item.
+      - name: thickness
+        description: Nominal thickness of the inventory item.
+      - name: diffrence_nom_mic
+        description: Difference between nominal thickness and `mic_1`; null when `mic_1` is 0.
+      - name: receiving_date
+        description: Receiving date cast to date.
+  - name: base_order_header
+    description: Transformed model for base_order_header with enriched and formatted order data.
+    columns:
+      # IDs
+      - name: order_id
+        description: Unique identifier for the order.
+        tests:
+          - not_null
+          - unique
+        data_type: int64
+      - name: quote_number
+        description: Quote number associated with the order.
+      - name: ship_to_id
+        description: Identifier for the shipping destination.
+        data_type: int64
+      - name: customer_id
+        description: Identifier for the customer placing the order.
+        data_type: int64
+      - name: customer_po
+        description: Customer purchase order number.
+        data_type: string
+      - name: salesperson_id_1
+        description: Identifier for the primary salesperson.
+        data_type: int64
+      - name: salesperson_id_2
+        description: Identifier for the secondary salesperson.
+        data_type: int64
+
+      # Fact columns
+      - name: order_cost_amount
+        description: Total cost amount of the order.
+        data_type: numeric
+      - name: material_cost
+        description: Material cost for the order.
+        data_type: numeric
+
+      # Dimension columns
+      - name: shipment_method
+        description: Shipping method selected for the order.
+      - name: order_number
+        description: Order number.
+        data_type: int64
+      - name: tax_state
+        description: Tax state code applicable to the order.
+        data_type: string
+      - name: ship_to_zip
+        description: Shipping destination ZIP code.
+        data_type: string
+      - name: ship_to_city
+        description: City for the shipping destination.
+        data_type: string
+      - name: ship_to_state
+        description: State for the shipping destination.
+        data_type: string
+      - name: ship_to_company_name
+        description: Name of the company at the shipping destination.
+        data_type: string
+      - name: ship_to_phone
+        description: Phone number for the shipping destination contact.
+        data_type: string
+      - name: ship_to_contact
+        description: Formatted contact name at the shipping destination.
+        data_type: string
+
+      # Date columns
+      - name: order_date
+        description: Date the order was placed.
+        data_type: date
+      - name: quote_date
+        description: Date the quote was generated.
+        data_type: date
+      - name: order_due_date
+        description: Due date for the order.
+        data_type: date
+
+      # Flag columns
+      - name: has_spacer
+        description: Indicates whether the order includes spacers.
+        data_type: boolean
+      - name: has_forklift
+        description: Indicates whether a forklift is required for the order.
+        data_type: boolean
+      - name: has_paper_wrap
+        description: Indicates whether the order requires paper wrapping.
+        data_type: boolean
+      - name: has_credit_release
+        description: Indicates whether the order has credit release approval.
+        data_type: boolean
+      - name: qoute_number
+        description: The unique identifier for the quote associated with the order. This is an integer value.
+        data_type: int64
+        quote: true
+      - name: shippment_method
+        description: The method of shipment for the order. This is a string value that can include various shipping methods such as 'FedEx', 'UPS', 'DHL', etc.
+        data_type: string
+        quote: true
+      - name: receiving_hours
+        description: The hours during which the recipient is available to receive the shipment. This is a string value.
+        data_type: string
+        quote: true
+      - name: max_skid_weight
+        description: This column represents the maximum weight that a skid can hold in the order. It is represented as an integer.
+        data_type: int64
+        quote: true
+      - name: printed_comment
+        description: This column contains any comments or special instructions that are to be printed on the order. It is represented as a string.
+        data_type: string
+        quote: true
+  - name: base_addresses
+    description: This is the base table for addresses.
+    columns:
+      - name: address_id
+        description: The unique identifier for each address entry in the database.
+        data_type: int64
+        tests:
+          - unique
+          - not_null
+        quote: true
+      - name: state
+        description: The state where the address is located.
+        data_type: string
+        quote: true
+      - name: city
+        description: The city where the address is located.
+        data_type: string
+        quote: true
+      - name: zip_code
+        description: The zip code of the address. This is a string field that contains the postal code for the address.
+        data_type: string
+        quote: true
+      - name: address_line_1
+        description: The first line of the address. This is a string field that typically contains the street name and number.
+        data_type: string
+        quote: true
+      - name: address_line_2
+        description: The second line of the address. This is an optional string field that typically contains additional information such as apartment or suite number.
+        data_type: string
+        quote: true
+  - name: base_codereader_scans
+    description: The base_codereader_scans model is a transformation of the scans from the scan guns. It renames the columns for better readability and understanding.
+    columns:
+      - name: scan_id
+        description: The unique identifier for each scan. This is an integer value.
+        data_type: int64
+        quote: true
+        tests:
+          - unique
+          - not_null
+      - name: inventory_tag
+        description: The unique identifier for each inventory item.
+        data_type: int64
+        quote: true
+      - name: s_id
+        data_type: int64
+        quote: true
+        description: The unique identifier for each session. This is an integer value.
+      - name: ud_id
+        data_type: string
+        quote: true
+        description: The unique identifier for each scan, represented as a string.
+      - name: user_id
+        data_type: int64
+        quote: true
+        description: The unique identifier for the user who performed the scan, represented as an integer.
+      - name: device_id
+        data_type: int64
+        quote: true
+        description: The unique identifier for the device used to perform the scan, represented as an integer.
+      - name: text_response
+        data_type: string
+        quote: true
+        description: This column contains the text response from the code reader scan. It is a string type and can contain any alphanumeric characters.
+      - name: timestamp
+        data_type: timestamp
+        quote: true
+        description: "This column contains the timestamp of when the code reader scan was performed. It is a timestamp type and follows the standard timestamp format: YYYY-MM-DD HH:MM:SS."
+      - name: scanned_timestamp
+        data_type: timestamp
+        quote: true
+        description: "This column contains the timestamp of when the code reader scan was actually scanned. It is a timestamp type and follows the standard timestamp format: YYYY-MM-DD HH:MM:SS."
+      - name: received_timestamp
+        data_type: timestamp
+        quote: true
+        description: The timestamp when the scan was received by the server. This is in UTC format.
+      - name: capture_type
+        data_type: string
+        quote: true
+        description: The type of capture that was performed. This can be a variety of types depending on the device and method used to scan the code.
+      - name: timezone
+        data_type: string
+        quote: true
+        description: The timezone in which the scan was performed. This is represented as a string in the format of 'Continent/City'.
+      - name: location
+        data_type: string
+        quote: true
+        description: The 'location' column represents the geographical location in the warehouse where the scan was performed
+  - name: base_production_order_lines
+    description: The base_production_order_lines model is a transformation of the ProductionOrderLines table. This contains all the production infromation before it is a finished good.
+    columns:
+      - name: production_order_line_id
+        description: Unique identifier for each production order line. This is a primary key.
+        data_type: int64
+        tests:
+          - not_null
+          - unique
+        quote: true
+      - name: production_order_id
+        description: Unique identifier for each production order. This is a foreign key that links to the Production Order table.
+        data_type: int64
+        quote: true
+      - name: line_number
+        description: The line number of the production order. This represents the sequence of operations in a production order.
+        data_type: int64
+        quote: true
+      - name: process_id
+        description: The unique identifier for the process associated with the production order line. This is a foreign key that links to the Process table.
+        data_type: int64
+        quote: true
+      - name: workstation_id
+        description: The unique identifier for the workstation where the production order line is processed. This is a foreign key that links to the Workstation table.
+        data_type: int64
+        quote: true
+      - name: location_id
+        description: The unique identifier for the location where the production order line is processed. This is a foreign key that links to the Location table.
+        data_type: int64
+        quote: true
+      - name: source_item_id
+        description: The unique identifier for the source item. This is a foreign key that links to the source item table.
+        data_type: int64
+        quote: true
+      - name: heat_id
+        description: The unique identifier for the heat. This is a foreign key that links to the heat table.
+        data_type: int64
+        quote: true
+      - name: source_pieces
+        description: The number of pieces in the source item. This is a float value rounded to two decimal places.
+        data_type: float64
+        quote: true
+      - name: source_width
+        description: The width of the source item in the production order line. This is a numeric value rounded to two decimal places.
+        data_type: numeric
+        quote: true
+      - name: source_length
+        description: The length of the source item in the production order line. This is a numeric value rounded to two decimal places.
+        data_type: numeric
+        quote: true
+      - name: source_weight
+        description: The weight of the source item in the production order line. This is a numeric value rounded to two decimal places.
+        data_type: numeric
+        quote: true
+      - name: breaks
+        description: The 'breaks' column represents the number of breaks in the production order line. It is an integer value.
+        data_type: int64
+        quote: true
+      - name: source_comment_id
+        description: The 'source_comment_id' column is a unique identifier for comments associated with the source item in the production order line. It is an integer value.
+        data_type: int64
+        quote: true
+      - name: is_completed
+        description: The 'is_completed' column is a boolean value indicating whether the production order line is completed. If the value is true, the production order line is completed; if false, it is not completed.
+        data_type: boolean
+        quote: true
+      - name: job_min
+        description: The 'job_min' column represents the  minutes that a job is expected to take. It is an integer value.
+        data_type: int64
+        quote: true
+      - name: priority
+        description: The 'priority' column represents the priority of the production order line. It is an integer value where a lower number indicates a higher priority.
+        data_type: int64
+        quote: true
+      - name: scheduled_date
+        description: The 'scheduled_date' column represents the date on which the production order line is scheduled. It is a date value in the format 'YYYY-MM-DD'.
+        data_type: date
+        quote: true
+      - name: scheduled_order_id
+        description: The unique identifier for the scheduled order. This field can be NULL if the order is not scheduled.
+        data_type: int64
+        quote: true
+      - name: setup_minutes
+        description: The 'setup_minutes' column represents the amount of time, in minutes, that is estimated in setting up the production line for the specific order. This includes tasks such as configuring machinery, preparing materials, and other necessary pre-production activities.
+        data_type: int64
+        quote: true
+      - name: machine_minutes
+        description: The 'machine_minutes' column represents the total number of minutes the machine is expected to be in operation for a particular production order line. This is an estimate and is used for scheduling and planning purposes.
+        data_type: int64
+        quote: true
+      - name: estimated_minutes
+        description: This column represents the estimated time in minutes that a production order line is expected to take. It is calculated based on the complexity of the order, the resources required, and other factors.
+        data_type: int64
+        quote: true
+      - name: is_linked
+        description: This boolean column indicates whether the production order line is linked to another order line. If true, it means that the production order line is dependent on another order line, and changes to the linked order line may affect this one.
+        data_type: boolean
+        quote: true
+      - name: source_inventory_id
+        description: This column represents the unique identifier of the inventory item that is being used for the production order line. It links the production order line to the specific inventory item in the inventory table.
+        data_type: int64
+        quote: true
+      - name: production_order_summary_id
+        description: This is an integer column that represents the unique identifier of the production order summary. It is used to link the production order line to its corresponding summary.
+        data_type: int64
+        quote: true
+      - name: source_thinkness
+        description: This is a numeric column that represents the thickness of the source material used in the production order line. It is measured in the same units as the source width and length.
+        data_type: numeric
+        quote: true
+      - name: source_i_d
+        description: This is a numeric column that represents the inner diameter of the source material used in the production order line. It is measured in the same units as the source width, length, and thickness.
+        data_type: numeric
+        quote: true
+      - name: source_o_d
+        description: This column represents the outer diameter of the source item in the production order line. It is a numeric value.
+        data_type: numeric
+        quote: true
+      - name: production_order_setup_id
+        description: This column represents the unique identifier for the setup of the production order. It is an integer value.
+        data_type: int64
+        quote: true
+      - name: reuse_drop
+        description: This column indicates whether the drop (the leftover material after the production process) is reusable or not. It is a boolean value where 'true' means the drop is reusable and 'false' means it is not.
+        data_type: boolean
+        quote: true
+      - name: calculate_drop
+        description: A boolean field indicating whether the drop in production is calculated or not. If true, the drop is calculated, if false, it is not.
+        data_type: boolean
+        quote: true
+      - name: estimated_labor
+        description: A numeric field representing the estimated labor cost for the production order line. This is calculated before the production starts and is used for budgeting and planning purposes.
+        data_type: numeric
+        quote: true
+      - name: actual_labor
+        description: A numeric field representing the actual labor cost incurred for the production order line. This is calculated after the production is completed and is used for accounting and cost analysis.
+        data_type: numeric
+        quote: true
+      - name: value_added_um
+        description: This column represents the unit of measure for the value added during the production process. It is a string type field.
+        data_type: string
+        quote: true
+  - name: base_workstation
+    description: This is the base table for the workstations (i.e., process lines).
+    columns:
+      - name: workstation_id
+        description: The unique identifier for each workstation
+        data_type: int64
+        tests:
+          - not_null
+          - unique
+        quote: true
+      - name: work_station_name
+        description: The name of the workstation. This is derived from the 'Description' column in the 'WorkStations' table in the 'sql_server' database.
+        data_type: string
+        quote: true
+  - name: base_production_order_header
+    description: This is the transform for the production order header.
+    columns:
+      - name: production_order_line_id
+        description: The unique identifier for the production order line.
+        data_type: int64
+        tests:
+          - unique
+          - not_null
+        quote: true
+      - name: warehouse_id
+        description: The unique identifier for the warehouse where the production order is being processed.
+        data_type: int64
+        quote: true
+      - name: finished_material_inventory_id
+        description: The unique identifier for the finished material inventory item.
+        data_type: int64
+        quote: true
+      - name: created_username
+        description: The username of the user who created the production order. This is extracted from the 'CreatedBy' field in the source data using a regular expression.
+        data_type: string
+        quote: true
+      - name: modified_username
+        description: The username of the user who last modified the production order. This is extracted from the 'ModifiedBy' field in the source data using a regular expression.
+        data_type: string
+        quote: true
+      - name: finished_material_comments
+        description: Comments associated with the finished material of the production order.
+        data_type: string
+        quote: true
+      - name: production_line_comments
+        description: Comments associated with the production line.
+        data_type: string
+        quote: true
+      - name: machine_minutes
+        description: The machine minutes used for the production order.
+        data_type: int64
+        quote: true
+      - name: setup_minutes
+        description: The setup minutes used for the production order.
+        data_type: int64
+        quote: true
+      - name: po_number
+        description: The production order number associated with the production order header.
+        data_type: string
+        quote: true
+      - name: modified_timestamp
+        description: The timestamp when the production order was last modified. This is combined from the 'DateModified' and 'TimeModified' fields in the 'RW_ProductionOrderHeader' table.
+        data_type: timestamp
+        quote: true
+  - name: base_comments
+    description: "The base_comments model is derived from the Comments table in the sql_server schema of the quality-metals-prod database. It consists of two columns: comment_id and comment_text. The comment_id column is the unique identifier for each comment, and the comment_text column contains the text of the comment."
+    columns:
+      - name: comment_id
+        description: The unique identifier for each comment in the database.
+        data_type: int64
+        tests:
+          - not_null
+          - unique
+        quote: true
+      - name: comment_text
+        description: The actual text content of the comment.
+        data_type: string
+        quote: true
+  - name: base_customer_contacts
+    description: The base_customer_contacts model is a replica of the Contacts table from the sql_server source. It contains all the columns and records from the original Contacts table. This model is used as a base model for further transformations and analysis.
+    columns:
+      - name: Fax
+        description: This is a string column that contains the fax number of the customer contact. It is used for communication purposes.
+        data_type: string
+        quote: true
+      - name: Zip
+        description: This is a string column that contains the zip code of the customer contact's address. It is used for geographical identification and shipping purposes.
+        data_type: string
+        quote: true
+      - name: City
+        description: The city where the customer contact is located.
+        data_type: string
+        quote: true
+      - name: Phone
+        description: The phone number of the customer contact.
+        data_type: string
+        quote: true
+      - name: State
+        description: The state where the customer contact is located.
+        data_type: string
+        quote: true
+      - name: eMail
+        description: The email address of the customer contact. This field is of string type and can be used for communication purposes.
+        data_type: string
+        quote: true
+      - name: BillTo
+        description: A boolean field indicating whether the customer contact is the billing contact. If true, invoices should be sent to this contact.
+        data_type: boolean
+        quote: true
+      - name: Address
+        description: The physical address of the customer contact. This field is of string type and can be used for shipping or mailing purposes.
+        data_type: string
+        quote: true
+      - name: CellNum
+        description: This field represents the cell phone number of the customer contact. It is stored as a string.
+        data_type: string
+        quote: true
+      - name: RemitTo
+        description: This is a boolean field indicating whether the customer contact is the remittance recipient. If true, payments should be sent to this contact.
+        data_type: boolean
+        quote: true
+      - name: RouteID
+        description: This field represents the ID of the route associated with the customer contact. It is stored as an integer.
+        data_type: int64
+        quote: true
+      - name: Spacers
+        description: This field represents any additional information or notes related to the customer contact. It is a string type field.
+        data_type: string
+        quote: true
+      - name: CertsFax
+        description: This boolean field indicates whether the customer contact prefers to receive certifications via fax. True indicates preference for fax, while False indicates otherwise.
+        data_type: boolean
+        quote: true
+      - name: Forklift
+        description: This boolean field indicates whether the customer contact's location has a forklift available. True indicates the presence of a forklift, while False indicates its absence.
+        data_type: boolean
+        quote: true
+      - name: JobTitle
+        description: The job title of the contact person at the customer's location.
+        data_type: string
+        quote: true
+      - name: RegionID
+        description: The unique identifier for the region where the customer is located.
+        data_type: int64
+        quote: true
+      - name: AddressID
+        description: The unique identifier for the customer's address.
+        data_type: int64
+        quote: true
+      - name: CommentID
+        description: The unique identifier for the comments associated with the customer contact. This is an integer value.
+        data_type: int64
+        quote: true
+      - name: ContactID
+        description: The unique identifier for the customer contact. This is an integer value.
+        data_type: int64
+        quote: true
+      - name: ExemptNo1
+        description: The first exemption number associated with the customer contact. This is a string value.
+        data_type: string
+        quote: true
+      - name: ExemptNo2
+        description: This field represents the second exemption number associated with the customer contact. It is a string type field.
+        data_type: string
+        quote: true
+      - name: PaperWrap
+        description: This boolean field indicates whether the customer contact prefers paper wrap packaging. True indicates preference for paper wrap, while False indicates otherwise.
+        data_type: boolean
+        quote: true
+      - name: CertsEmail
+        description: This boolean field indicates whether the customer contact prefers to receive certifications via email. True indicates preference for email, while False indicates otherwise.
+        data_type: boolean
+        quote: true
+      - name: CertsPrint
+        description: A boolean field indicating whether the customer prefers to receive certifications via print. True indicates that the customer prefers print, while False indicates otherwise.
+        data_type: boolean
+        quote: true
+      - name: CurrencyID
+        description: An integer field representing the unique identifier of the currency used by the customer. This ID corresponds to a specific currency in the currency table.
+        data_type: int64
+        quote: true
+      - name: ModifiedBy
+        description: A string field capturing the username of the last person who modified the customer contact record. This field is updated every time a change is made to the record.
+        data_type: string
+        quote: true
+      - name: ModifiedOn
+        description: The timestamp indicating when the customer contact record was last modified.
+        data_type: datetime
+        quote: true
+      - name: POShipFlag
+        description: A boolean flag indicating whether the customer contact has a purchase order shipping flag. True indicates that the customer contact has a PO shipping flag, while False indicates the absence of a PO shipping flag.
+        data_type: boolean
+        quote: true
+      - name: ShipToName
+        description: The name of the location where the customer contact's orders are shipped to. This is typically the name of a warehouse or a specific department within a company.
+        data_type: string
+        quote: true
+      - name: ContactType
+        description: An integer value representing the type of contact. Each unique integer corresponds to a different type of contact, such as customer, supplier, etc.
+        data_type: int64
+        quote: true
+      - name: RemitToName
+        description: The name of the entity to which payments should be remitted. This is typically the name of a business or individual.
+        data_type: string
+        quote: true
+      - name: ContactFName
+        description: The first name of the contact person at the customer's location. This is typically used for direct communication with the customer.
+        data_type: string
+        quote: true
+      - name: ContactLName
+        description: This column stores the last name of the contact person for the customer.
+        data_type: string
+        quote: true
+      - name: CertsRequired
+        description: This boolean column indicates whether certifications are required for the customer. If true, certifications are required. If false, they are not required.
+        data_type: boolean
+        quote: true
+      - name: InstitutionID
+        description: This column stores the unique identifier for the institution associated with the customer. This is a foreign key linking to the Institution table.
+        data_type: int64
+        quote: true
+      - name: MaxSkidWeight
+        description: This column represents the maximum weight (in kilograms) that a skid can carry. It is an integer value.
+        data_type: int64
+        quote: true
+      - name: OverheadCrane
+        description: This column indicates whether the customer has an overhead crane available. It is a boolean value where 'true' means the customer has an overhead crane and 'false' means they do not.
+        data_type: boolean
+        quote: true
+      - name: CRM_Identifier
+        description: This column represents the unique identifier for the customer in the Customer Relationship Management (CRM) system. It is a string value.
+        data_type: string
+        quote: true
+      - name: ReceivingHours
+        description: This field represents the hours during which the customer is available to receive shipments. It is a string field and can contain any valid time range.
+        data_type: string
+        quote: true
+      - name: ARBillingContact
+        description: This boolean field indicates whether the contact is the Accounts Receivable billing contact for the customer. If true, this contact is the primary point of contact for billing-related matters.
+        data_type: boolean
+        quote: true
+      - name: DefaultShipViaID
+        description: This integer field represents the default shipping method for the customer. It corresponds to an ID in the shipping methods table.
+        data_type: int64
+        quote: true
+      - name: FreightAmountDefault
+        description: This column represents the default freight amount for the customer contact. It is a numeric value that indicates the standard cost of freight for shipments to this contact.
+        data_type: numeric
+        quote: true
+      - name: DefaultShipToWarehouseID
+        description: This column represents the default warehouse ID where the goods are shipped for the customer contact. It is an integer value that corresponds to a specific warehouse in the company's database.
+        data_type: int64
+        quote: true
+  - name: base_customer_part_number
+    description: The base_customer_part_number model is derived from the PartNumber table in the sql_server source. It includes columns for part number id, customer id, item id, width, length, price, last base cost, gauge, part number, and part description. The model is used to provide a base view of customer part numbers.
+    columns:
+      - name: part_number_id
+        description: The unique identifier for each part number. This is a primary key in the base_customer_part_number model.
+        data_type: int64
+        tests:
+          - unique
+          - not_null
+        quote: true
+      - name: customer_id
+        description: The unique identifier for each customer. This is used to link the part number to the customer who purchased it.
+        data_type: int64
+        quote: true
+      - name: item_id
+        description: The unique identifier for each item. This is used to link the part number to the specific item it represents.
+        data_type: int64
+        quote: true
+      - name: width
+        description: The width of the part number item. This is a numeric value that represents the width dimension of the item.
+        data_type: numeric
+        quote: true
+      - name: length
+        description: The length of the part number item. This is a numeric value that represents the length dimension of the item.
+        data_type: numeric
+        quote: true
+      - name: price
+        description: The price of the part number item. This is a numeric value that represents the selling price of the item.
+        data_type: numeric
+        quote: true
+      - name: last_base_cost
+        description: The last recorded base cost of the part. This is a numeric value that represents the cost of the part in the last transaction.
+        data_type: numeric
+        quote: true
+      - name: gauge
+        description: The gauge of the part. This is a numeric value that represents the thickness of the part.
+        data_type: numeric
+        quote: true
+      - name: part_number
+        description: The unique identifier for the part. This is a string value that represents the part number.
+        data_type: string
+        quote: true
+      - name: part_description
+        description: This column contains the description of the part associated with the part number. It is a string type field that provides detailed information about the specific part.
+        data_type: string
+        quote: true
+  - name: base_inventory_locations
+    description: "The base_inventory_locations model is a transformation of the RW_InventoryLocation table from the sql_server source. It formats the original data into a more readable and usable format. The model includes the following columns: location_id, location_name, Warehouse, reserve_priority, is_excess, and is_inactive. The is_excess and is_inactive columns are boolean values derived from the excess and Inactive columns of the source table, respectively."
+    columns:
+      - name: location_id
+        description: The unique identifier for each inventory location. This is an integer value.
+        data_type: int64
+        tests:
+          - not_null
+          - unique
+        quote: true
+      - name: location_name
+        description: The name of the inventory location. This is a string value.
+        data_type: string
+        quote: true
+      - name: Warehouse
+        description: The name of the warehouse where the inventory location is situated. This is a string value.
+        data_type: string
+        quote: true
+      - name: reserve_priority
+        description: This column represents the priority of the inventory location for reserving items. It is an integer value where a lower number indicates a higher priority.
+        data_type: int64
+        quote: true
+      - name: is_excess
+        description: This boolean column indicates whether the inventory location is considered as excess. If the value is true, it means the location is considered as excess.
+        data_type: boolean
+        quote: true
+      - name: is_inactive
+        description: This boolean column indicates whether the inventory location is inactive. If the value is true, it means the location is inactive.
+        data_type: boolean
+        quote: true
+  - name: base_warehouses
+    description: "The base_warehouses model is a transformation of the Warehouse table from the sql_server source. It includes the following columns: warehouse_id, warehouse_name, address_id, warehouse_phone, warehouse_fax, and warehouse_email. Each row in the model represents a unique warehouse."
+    columns:
+      - name: warehouse_id
+        description: The unique identifier for each warehouse. This is an integer value that is automatically generated and incremented for each new warehouse.
+        data_type: int64
+        tests:
+          - not_null
+          - unique
+        quote: true
+      - name: warehouse_name
+        description: The name of the warehouse. This is a string value that describes the warehouse. It is manually entered during the warehouse creation process and can be updated as needed.
+        data_type: string
+        quote: true
+      - name: address_id
+        description: The unique identifier for the address associated with each warehouse. This is an integer value that is automatically generated and incremented for each new address. It is used to link the warehouse to its physical location.
+        data_type: int64
+        quote: true
+      - name: warehouse_phone
+        description: The phone number of the warehouse. It is a string type data and can contain any valid phone number.
+        data_type: string
+        quote: true
+      - name: warehouse_fax
+        description: The fax number of the warehouse. It is a string type data and can contain any valid fax number.
+        data_type: string
+        quote: true
+      - name: warehouse_email
+        description: The email address of the warehouse. It is a string type data and can contain any valid email address.
+        data_type: string
+        quote: true
+  - name: base_production_orders_finished_goods
+    description: The 'production_orders_finished_goods' model is a transformation of the 'RW_ProductionOrderFinishedMaterial' table from the 'sql_server' source. The table contains the information from production orders when it is complete.
+    columns:
+      - name: production_order_finished_id
+        description: This is a unique identifier for each finished production order. It is derived from the 'ProductionOrderBtsID' field in the source.
+        data_type: int64
+        tests:
+          - not_null
+          - unique
+        quote: true
+      - name: production_order_line_id
+        description: This column represents the unique identifier for each production order line. It is the FK to production orders.
+        data_type: int64
+        quote: true
+      - name: finished_inventory_id
+        description: The unique identifier for the finished inventory item in the production order.
+        data_type: int64
+        quote: true
+      - name: order_line_id
+        description: The unique identifier for the order line. If the order line is null then it means that the production order has no attached order.
+        data_type: int64
+        quote: true
+      - name: finished_material_comments
+        description: Comments associated with the finished material.
+        data_type: string
+        quote: true
+      - name: has_sales_order
+        description: Boolean flag indicating if the finished good is associated with a sales order (order_line_id is not -1).
+        data_type: boolean
+        quote: true
+      - name: is_rewrap
+        description: Boolean flag indicating if the finished good is a rewrap (order_line_id is -1 and finished_length is 0).
+        data_type: boolean
+        quote: true
+      - name: finished_length
+        description: The length of the finished goods produced.
+        data_type: numeric
+        quote: true
+      - name: finished_width
+        description: The width of the finished goods produced.
+        data_type: numeric
+        quote: true
+      - name: finished_feet
+        description: The total feet of the finished goods.
+        data_type: numeric
+        quote: true
+      - name: finished_weight
+        description: The total weight of the finished goods produced.
+        data_type: numeric
+        quote: true
+      - name: wip_weight
+        description: The weight of the work in progress (WIP).
+        data_type: numeric
+        quote: true
+      - name: finished_pieces
+        description: The number of pieces of finished goods produced.
+        data_type: int64
+        quote: true
+      - name: wip_pieces
+        description: The number of pieces of work in progress (WIP).
+        data_type: int64
+        quote: true
+      - name: finished_machine_minutes
+        description: The total machine minutes spent on the production of the finished goods.
+        data_type: int64
+        quote: true
+  - name: base_open_orders
+    description: The base_open_orders model is derived from the sql_server.RW_OpenOrders source. It contains information about open orders including the order line id, order id, outstanding weight, outstanding quantity, and the open dollar amount. The model is used to track the status of open orders.
+    columns:
+      - name: order_line_id
+        description: The unique identifier for each order line in the open orders. This is derived from the '__OrderLines__solineID' column in the 'RW_OpenOrders' table of the 'sql_server' schema in the 'quality-metals-prod' database.
+        data_type: int64
+        quote: true
+      - name: order_id
+        description: The unique identifier for each order in the open orders. This is derived from the '__QuoteSalesApprovalHistory__SOQTID' column in the 'RW_OpenOrders' table of the 'sql_server' schema in the 'quality-metals-prod' database.
+        data_type: int64
+        quote: true
+      - name: weight_outstanding
+        description: The weight of the product that is yet to be delivered for each open order. This is derived from the 'Wght_Remain' column in the 'RW_OpenOrders' table of the 'sql_server' schema in the 'quality-metals-prod' database.
+        data_type: numeric
+        quote: true
+      - name: quantity_outstanding
+        description: The remaining quantity of the open order that is yet to be fulfilled.
+        data_type: int64
+        quote: true
+      - name: open_dollars
+        description: The total dollar amount of the open order that is yet to be fulfilled.
+        data_type: numeric
+        quote: true
+  - name: base_gl_transactions
+    description: The base_gl_transactions model is a transformation of the GLTransactions table from the `sql_server` database. It includes columns for the GL transaction ID, full GL number, GL number, GL group, source ID, username, workstation, transaction amount, transaction date, post date, and GL period. The GL number and GL group are derived from the GLNumber column in the source data, with the GL number being the first part of the GLNumber string and the GL group being the second part, if it exists. The username and workstation are extracted from the UserInfo column in the source data. The transaction amount, transaction date, post date, and GL period are directly taken from the Amount, TranDt, PostDt, and GLPeriod columns in the source data, respectively.
+    columns:
+      - name: gl_transaction_id
+        description: The unique identifier for each General Ledger transaction.
+        data_type: int64
+        quote: true
+      - name: gl_full
+        description: The full General Ledger number, which includes both the GL number and the GL group, separated by a dash.
+        data_type: string
+        quote: true
+      - name: gl_number
+        description: The General Ledger number, extracted from the GL full number. This is the first part of the GL full number before the dash.
+        data_type: string
+        quote: true
+      - name: gl_group
+        description: The 'gl_group' column represents the group of the General Ledger (GL) number. It is extracted from the 'GLNumber' column in the source data by splitting the 'GLNumber' on the '-' character. If the 'GLNumber' does not contain a '-', the 'gl_group' will be NULL.
+        data_type: string
+        quote: true
+      - name: source_id
+        description: The 'source_id' column represents the unique identifier of the source from which the GL transaction originated. It is directly mapped from the 'SourceID' column in the source data.
+        data_type: int64
+        quote: true
+      - name: username
+        description: "The 'username' column represents the username of the user who initiated the GL transaction. It is extracted from the 'UserInfo' column in the source data using a regular expression to match the pattern 'User: [^\\\\]+\\\\([^ ]+)'. This pattern captures the username after the last '\\' character in the 'User' field of the 'UserInfo' column."
+        data_type: string
+        quote: true
+      - name: workstation
+        description: The workstation column represents the workstation from which the transaction was made. It is extracted from the UserInfo field using a regular expression.
+        data_type: string
+        quote: true
+      - name: transaction_amount
+        description: The transaction_amount column represents the amount of the transaction. It is a numeric field.
+        data_type: numeric
+        quote: true
+      - name: transaction_date
+        description: The transaction_date column represents the date and time when the transaction was made. It is a datetime field.
+        data_type: datetime
+        quote: true
+      - name: post_date
+        description: The date when the transaction was posted. This is a datetime field.
+        data_type: datetime
+        quote: true
+      - name: gl_period
+        description: The General Ledger period in which the transaction occurred. This is an integer field.
+        data_type: int64
+        quote: true
+      - name: transaction_datetime
+        description: This column represents the date and time when the transaction was made. It is extracted from the TranDt field in the source data. The data type is datetime.
+        data_type: datetime
+        quote: true
+      - name: post_date_
+        description: This column represents the date when the transaction was posted. It is extracted from the PostDt field in the source data. The data type is datetime.
+        data_type: datetime
+        quote: true
+  - name: base_gl_adj_source
+    description: The base_gl_adj_source model is derived from the GLAdjSource table in the sql_server database. It contains information about General Ledger (GL) adjustments, including the source GL number, status flags (updated, pending, deleted, inactive), adjustment comments and descriptions, dates related to the GL source, reversal, clearance, and posting, user and workstation details for the clearance and creation of the GL adjustment, and the total adjustment amount.
+    columns:
+      - name: gl_source_id
+        description: The unique identifier for the General Ledger (GL) source.
+        data_type: int64
+        quote: true
+      - name: source_gl_number
+        description: The number associated with the source General Ledger (GL).
+        data_type: int64
+        quote: true
+      - name: is_updated
+        description: A boolean flag indicating whether the GL source record has been updated or not. True indicates an update, while False indicates no update.
+        data_type: boolean
+        quote: true
+      - name: is_pending
+        description: A boolean flag indicating whether the GL adjustment is pending. If true, the adjustment is yet to be processed.
+        data_type: boolean
+        quote: true
+      - name: is_deleted
+        description: A boolean flag indicating whether the GL adjustment has been deleted. If true, the adjustment has been removed from the system.
+        data_type: boolean
+        quote: true
+      - name: is_inactive
+        description: A boolean flag indicating whether the GL adjustment is inactive. If true, the adjustment is not currently in use or has been deactivated.
+        data_type: boolean
+        quote: true
+      - name: ajustment_comment
+        description: This column contains any comments related to the adjustment made in the General Ledger source.
+        data_type: string
+        quote: true
+      - name: ajustment_description
+        description: This column contains a description of the adjustment made in the General Ledger source.
+        data_type: string
+        quote: true
+      - name: gl_source_date
+        description: This column contains the date when the General Ledger source was created or updated.
+        data_type: date
+        quote: true
+      - name: gl_reversal_date
+        description: The date when the general ledger entry was reversed. This is extracted from the 'ReversalDt' field in the source data and is cast to a date format.
+        data_type: date
+        quote: true
+      - name: gl_cleared_date
+        description: The date when the general ledger entry was cleared. This is extracted from the 'ClearedDate' field in the source data and is cast to a date format.
+        data_type: date
+        quote: true
+      - name: posting_date
+        description: The date when the general ledger entry was posted. This is extracted from the 'PostingDate' field in the source data and is cast to a date format.
+        data_type: date
+        quote: true
+      - name: cleared_username
+        description: The username of the individual who cleared the GL adjustment. This is extracted from the 'ClearedUserInfo' field in the source data.
+        data_type: string
+        quote: true
+      - name: cleared_workstation
+        description: The workstation from which the GL adjustment was cleared. This is extracted from the 'ClearedUserInfo' field in the source data.
+        data_type: string
+        quote: true
+      - name: created_username
+        description: The username of the individual who created the GL adjustment. This is extracted from the 'Created_UserInfo' field in the source data.
+        data_type: string
+        quote: true
+      - name: created_workstation
+        description: The workstation where the GL adjustment source was created. This is extracted from the 'Created_UserInfo' field using a regular expression to isolate the workstation information.
+        data_type: string
+        quote: true
+      - name: total_ajustment_amount
+        description: The total amount of the GL adjustment. This is a numeric field representing the sum of all adjustments associated with a particular GL source.
+        data_type: numeric
+        quote: true
+  - name: base_gl_view
+    description: This model extracts and transforms data from the `GeneralLedger_view` table within the `sql_server` dataset.  It standardizes key fields such as invoice numbers, GL numbers, and IDs, and extracts metadata such as user and workstation info.  It is used to analyze general ledger transactions with added clarity and usability.
+    columns:
+      - name: gl_trasaction_id
+        description: Unique identifier for the general ledger transaction.
+        data_type: int64
+        quote: true
+      - name: gl_source_id
+        description: Source system identifier for the general ledger entry.
+        data_type: int64
+        quote: true
+      - name: gl_number
+        description: The primary portion of the GL number, extracted from the full GLNumber string before the dash.
+        data_type: string
+        quote: true
+      - name: gl_group
+        description: The secondary group component of the GLNumber string, if present.
+        data_type: string
+        quote: true
+      - name: Vendor_id
+        description: ID of the vendor associated with the transaction. Normalized to null if 0 or -1.
+        data_type: int64
+        quote: true
+      - name: inventory_id
+        description: Inventory item ID associated with the transaction. Normalized to null if 0.
+        data_type: int64
+        quote: true
+      - name: ih_source_id
+        description: Source ID related to the inventory header or related sub-system.
+        data_type: int64
+        quote: true
+      - name: ap_check_number
+        description: AP check number tied to the transaction. Null if 0.
+        data_type: int64
+        quote: true
+      - name: customer_invoice_number
+        description: Invoice number extracted from the reference string using regex. Represents external invoice number.
+        data_type: string
+        quote: true
+      - name: internal_invoice_number
+        description: Internal invoice number associated with the transaction.
+        data_type: string
+        quote: true
+      - name: transaction_amount
+        description: Dollar amount of the transaction.
+        data_type: numeric
+        quote: true
+      - name: source
+        description: Source name or system from which the transaction originated.
+        data_type: string
+        quote: true
+      - name: comment
+        description: User-entered or system-generated comment related to the transaction.
+        data_type: string
+        quote: true
+      - name: customer
+        description: Name of the customer involved in the transaction.
+        data_type: string
+        quote: true
+      - name: warehouse
+        description: location associated with the transaction.
+        data_type: string
+        quote: true
+      - name: transaction_description
+        description: Description of the transaction for reporting or auditing purposes.
+        data_type: string
+        quote: true
+      - name: vendor_name
+        description: Name of the vendor related to the transaction.
+        data_type: string
+        quote: true
+      - name: username
+        description: Username of the individual who performed or entered the transaction. Extracted using a macro.
+        data_type: string
+        quote: true
+      - name: workstation
+        description: Workstation identifier from which the transaction was made. Extracted using a macro.
+        data_type: string
+        quote: true
+      - name: gl_post_date
+        description: Date the transaction was posted to the general ledger.
+        data_type: date
+        quote: true
+      - name: transaction_date
+        description: Original transaction date when it occurred.
+        data_type: date
+        quote: true
+  - name: base_AR_journal
+    description: Transformed model for AR journal entries with enriched and formatted AR journal data.
+    columns:
+      - name: ar_journal_id
+        description: Unique identifier for the AR journal entry.
+        tests:
+          - not_null
+      - name: invoice_number
+        description: Invoice number associated with the AR journal entry.
+      - name: payment_id
+        description: Payment identifier associated with the AR journal entry.
+      - name: customer_id
+        description: Customer identifier associated with the AR journal entry.
+      - name: amount_pieces
+        description: Number of pieces in the AR journal entry.
+      - name: amount_feet
+        description: Number of feet in the AR journal entry.
+      - name: days_from_transaction
+        description: Number of days from the transaction date to today.
+      - name: amount_open
+        description: The open amount for the AR journal entry.
+      - name: is_open_invoice
+        description: Boolean flag indicating if the invoice is open (open amount > 0).
+      - name: amount_discount
+        description: Discount amount applied to the AR journal entry.
+      - name: amount_original
+        description: Original amount of the AR journal entry before discounts.
+      - name: total_amount
+        description: Total amount after discounts (original amount minus discount amount).
+      - name: transaction_date
+        description: The date of the AR journal transaction.
+  - name: base_customer_terms
+    description: Base model for customer payment terms, sourced from the Terms table. Includes discount and due days, discount percent, and terms name.
+    columns:
+      - name: terms_id
+        description: Unique identifier for the payment terms.
+        tests:
+          - not_null
+          - unique
+      - name: discount_days
+        description: Number of days within which a discount is available.
+      - name: due_days
+        description: Number of days until the payment is due.
+      - name: discount_percent
+        description: Discount percentage available if paid within the discount days.
+      - name: terms_name
+        description: Name or description of the payment terms.
+  - name: base_cru_data
+    description: "Standardized and enriched CRU price data for steel commodities, including pricing type, metal sub type, and frequency. This model is used for downstream reporting and analysis of commodity prices."
+    columns:
+      - name: commodity_group
+        description: "Standardized commodity group. Only 'Steel - Carbon' is mapped to 'Steel'."
+      - name: pricing_type
+        description: "Type of pricing, e.g., 'Spot Price', derived from keywords in the Price_Detail."
+      - name: metal_sub_type
+        description: "Subtype of metal, such as 'Hot Dipped Galvanised', 'Cold-rolled Coil', etc., based on Price_Detail."
+      - name: hot_dipped_pricing_type
+        description: "Further categorization for hot-dipped galvanised pricing, such as 'Coating Included', 'Base', or 'Standard'."
+      - name: price_type
+        description: "Original price type from the source data."
+      - name: market
+        description: "Market name from the source data."
+      - name: unit_of_measurement
+        description: "Unit of measurement for the price (e.g., USD/tonne)."
+      - name: price_id
+        description: "Unique identifier for the price record."
+      - name: report_date
+        description: "Date of the price report."
+      - name: price_value
+        description: "The numeric value of the price."
+      - name: date_frequency
+        description: "Frequency of the report, such as 'Quarterly', 'Monthly', 'Yearly', or 'Weekly', inferred from the date string."
+
+  - name: base_galvannealed_cost
+    description: "Base model for galvannealed steel cost data by location. Contains cost information for galvannealed steel products from different suppliers with standardized column names and additional metadata."
+    columns:
+      - name: location
+        description: "Supplier or location name."
+        tests:
+          - not_null
+      - name: cost
+        description: "Cost amount for galvannealed steel."
+        tests:
+          - not_null
+      - name: effective_start_timestamp
+        description: "The timestamp when this cost becomes effective (ISO 8601 format)."
+        tests:
+          - not_null
+      - name: effective_end_timestamp
+        description: "The timestamp when this cost is no longer effective (ISO 8601 format). Null if currently active."
+      - name: steel_type
+        description: "Type of steel, always 'GALVANNEALED' for this model."
+        tests:
+          - not_null
+
+
+  - name: base_steel_freight_adders
+    description: "Base model for steel freight pricing adders by location. Contains freight cost adjustments for steel products from different suppliers with standardized column names and additional metadata."
+    columns:
+      - name: location
+        description: "Supplier or location name."
+        tests:
+          - not_null
+      - name: freight_adder_amount
+        description: "Freight adder amount for steel products."
+        tests:
+          - not_null
+      - name: effective_start_date
+        description: "The date when this pricing becomes effective (YYYY-MM-DD format)."
+        tests:
+          - not_null
+      - name: effective_end_date
+        description: "The date when this pricing is no longer effective (YYYY-MM-DD format). Null if currently active."
+      - name: adder_type
+        description: "Type of adder, always 'FREIGHT' for this model."
+        tests:
+          - not_null
+
+
+  - name: base_texarkana_width_adders
+    description: "Base model for Texarkana width-based pricing adders for steel products. Contains pricing adjustments based on width ranges for the Texarkana facility with standardized column names and additional metadata."
+    columns:
+      - name: min_width
+        description: "Minimum width in inches for this pricing tier."
+        tests:
+          - not_null
+      - name: max_width
+        description: "Maximum width in inches for this pricing tier."
+        tests:
+          - not_null
+      - name: width_adder_amount
+        description: "Pricing adder amount for this width range."
+        tests:
+          - not_null
+      - name: effective_start_date
+        description: "The date when this pricing becomes effective (YYYY-MM-DD format)."
+        tests:
+          - not_null
+      - name: effective_end_date
+        description: "The date when this pricing is no longer effective (YYYY-MM-DD format). Null if currently active."
+      - name: adder_type
+        description: "Type of adder, always 'TEXARKANA_WIDTH' for this model."
+        tests:
+          - not_null
+      - name: material_type
+        description: "Type of material, always 'STEEL' for this model."
+        tests:
+          - not_null
+      - name: is_active
+        description: "Boolean flag indicating whether this width adder is currently active. True if effective_end_date is null or '1900-01-01' (default for active records), false otherwise."
+
+
+  - name: base_texarkana_gauge_adders
+    description: "Base model for Texarkana gauge-based pricing adders for aluminum products. Contains pricing adjustments based on gauge ranges and aluminum types for the Texarkana facility with standardized column names and additional metadata."
+    columns:
+      - name: gauge_min
+        description: "Minimum gauge in inches for this pricing tier."
+        tests:
+          - not_null
+      - name: gauge_max
+        description: "Maximum gauge in inches for this pricing tier."
+        tests:
+          - not_null
+      - name: alum_type
+        description: "Aluminum alloy type (e.g., 3003, 5052, 3003_tread)."
+        tests:
+          - not_null
+      - name: gauge_adder_amount
+        description: "Pricing adder amount for this gauge range and aluminum type."
+        tests:
+          - not_null
+      - name: effective_start_date
+        description: "The date when this pricing becomes effective (YYYY-MM-DD format)."
+        tests:
+          - not_null
+      - name: effective_end_date
+        description: "The date when this pricing is no longer effective (YYYY-MM-DD format). Null if currently active."
+      - name: adder_type
+        description: "Type of adder, always 'TEXARKANA_GAUGE' for this model."
+        tests:
+          - not_null
+      - name: material_type
+        description: "Type of material, always 'ALUMINUM' for this model."
+        tests:
+          - not_null
+      - name: is_active
+        description: "Boolean flag indicating whether this gauge adder is currently active. True if effective_end_date is null or '1900-01-01' (default for active records), false otherwise."
+
+
+  - name: base_steel_coatings
+    description: "Base model for steel coating pricing data by gauge, width, steel type, and location. Contains pricing adjustments for different steel coatings and specifications with standardized column names and additional metadata."
+    columns:
+      - name: gauge
+        description: "Gauge thickness in inches."
+        tests:
+          - not_null
+      - name: width
+        description: "Width in inches."
+        tests:
+          - not_null
+      - name: steel_type
+        description: "Type of steel coating (e.g., galvanized, galvanneal)."
+        tests:
+          - not_null
+      - name: location
+        description: "Supplier or location name."
+        tests:
+          - not_null
+      - name: coating_amount
+        description: "Pricing amount for this specification."
+        tests:
+          - not_null
+      - name: effective_start_date
+        description: "The date when this pricing becomes effective (YYYY-MM-DD format)."
+        tests:
+          - not_null
+      - name: effective_end_date
+        description: "The date when this pricing is no longer effective (YYYY-MM-DD format). Null if currently active."
+      - name: pricing_type
+        description: "Type of pricing, always 'STEEL_COATING' for this model."
+        tests:
+          - not_null
+
+  - name: base_steel_gauge_adders
+    description: "Base model for steel gauge-based pricing adders by gauge, width, steel type, and location. Contains pricing adjustments for different steel gauges and specifications with standardized column names and additional metadata."
+    columns:
+      - name: gauge
+        description: "Gauge thickness in inches."
+        tests:
+          - not_null
+      - name: width
+        description: "Width in inches."
+        tests:
+          - not_null
+      - name: steel_type
+        description: "Type of steel (e.g., cold_rolled, galvanized)."
+        tests:
+          - not_null
+      - name: location
+        description: "Supplier or location name."
+        tests:
+          - not_null
+      - name: gauge_adder_amount
+        description: "Pricing adder amount for this specification."
+        tests:
+          - not_null
+      - name: effective_start_date
+        description: "The date when this pricing becomes effective (YYYY-MM-DD format)."
+        tests:
+          - not_null
+      - name: effective_end_date
+        description: "The date when this pricing is no longer effective (YYYY-MM-DD format). Null if currently active."
+      - name: adder_type
+        description: "Type of adder, always 'STEEL_GAUGE' for this model."
+        tests:
+          - not_null
+      - name: material_type
+        description: "Type of material, always 'STEEL' for this model."
+        tests:
+          - not_null
+
+  - name: base_production_orders_history
+    description: "The base_production_orders_history model captures the history of production orders, including transaction details, timing, and user information. It is derived from the ProductionHistory table."
+    columns:
+      - name: production_order_line_id
+        description: "Unique identifier for the production order line associated with this history record."
+        data_type: int64
+        tests:
+          - not_null
+      - name: production_order_number
+        description: "The production order number associated with the transaction."
+        data_type: int64
+      - name: machine
+        description: "The machine used for the production order."
+        data_type: string
+      - name: username
+        description: "The username of the user who performed the transaction, extracted from UserInfo."
+        data_type: string
+      - name: transaction_type
+        description: "Code indicating the type or source of the transaction."
+        data_type: string
+      - name: stop_pause_reason
+        description: "The reason for stopping or pausing the production."
+        data_type: string
+      - name: transaction_timestamp
+        description: "The timestamp when the transaction occurred, combined from transaction date and time."
+        data_type: timestamp
+      - name: step_elapsed_time
+        description: "The elapsed time in minutes for the production step."
+        data_type: numeric
+
+  - name: base_production_order_performance
+    description: "The base_production_order_performance model captures performance metrics for production orders, including setup times, machine minutes, and variances. It is derived from the RW_ProductionOrderPerformance table."
+    columns:
+      - name: production_order_line_id
+        description: "Unique identifier for the production order line associated with the performance record."
+        data_type: int64
+        tests:
+          - not_null
+      - name: line_number
+        description: "The line number within the production order."
+        data_type: int64
+      - name: process
+        description: "The process name associated with the production step."
+        data_type: string
+      - name: performance_username
+        description: "The username of the user who recorded the performance, extracted from UserInfo."
+        data_type: string
+      - name: warehouse_name
+        description: "The name of the warehouse where the production took place."
+        data_type: string
+      - name: workstation_name
+        description: "The name of the workstation where the production took place."
+        data_type: string
+      - name: setup_hours
+        description: "The setup time in hours."
+        data_type: numeric
+      - name: setup_minutes
+        description: "The setup time in minutes."
+        data_type: numeric
+      - name: total_hours
+        description: "The total hours spent on the production step."
+        data_type: numeric
+      - name: soft_reserve
+        description: "Soft reserve quantity or value."
+        data_type: numeric
+      - name: machine_minutes
+        description: "The machine time in minutes used during the production step."
+        data_type: numeric
+      - name: variance_minutes
+        description: "The variance in minutes between estimated and actual time."
+        data_type: numeric
+      - name: estimated_minutes
+        description: "The estimated minutes for the production step."
+        data_type: numeric
+
+  - name: base_po_line
+    description: "Base model for purchase order lines. Contains detailed information about individual line items on purchase orders including item specifications, pricing, dimensions, and delivery details."
+    columns:
+      # Primary key
+      - name: po_line_id
+        description: "Unique identifier for the purchase order line."
+        data_type: int64
+        tests:
+          - not_null
+          - unique
+
+      # Foreign keys
+      - name: po_head_id
+        description: "Foreign key to the purchase order header."
+        data_type: int64
+      - name: item_id
+        description: "Foreign key to the item master."
+        data_type: int64
+      - name: inventory_id
+        description: "Foreign key to the inventory record."
+        data_type: int64
+      - name: customer_id
+        description: "Foreign key to the customer associated with the purchase order line."
+        data_type: int64
+      - name: ship_to_id
+        description: "Foreign key to the ship-to address."
+        data_type: int64
+      - name: country_id
+        description: "Foreign key to the country."
+        data_type: int64
+      - name: classification_id
+        description: "Foreign key to the item classification."
+        data_type: int64
+      - name: vendor_part_number_id
+        description: "Foreign key to the vendor part number."
+        data_type: int64
+
+      # Line info
+      - name: line_num
+        description: "Line number within the purchase order."
+        data_type: int64
+      - name: release
+        description: "Release number for the purchase order line."
+        data_type: int64
+
+      # Descriptive attributes
+      - name: description
+        description: "Description of the item on the purchase order line."
+        data_type: string
+      - name: um
+        description: "Unit of measure for the item."
+        data_type: string
+      - name: mill
+        description: "Mill or manufacturer of the material."
+        data_type: string
+      - name: chemistry
+        description: "Chemical composition or grade of the material."
+        data_type: string
+      - name: country_of_melt_and_pour
+        description: "Country where the material was melted and poured."
+        data_type: string
+      - name: importer_of_record
+        description: "Name of the importer of record for the material."
+        data_type: string
+      - name: vendor_tag_num
+        description: "Vendor's tag or reference number for the material."
+        data_type: string
+
+      # Dimensions
+      - name: thickness
+        description: "Thickness of the material."
+        data_type: numeric
+      - name: gauge_min
+        description: "Minimum gauge specification for the material."
+        data_type: numeric
+      - name: gauge_max
+        description: "Maximum gauge specification for the material."
+        data_type: numeric
+      - name: width
+        description: "Width of the material."
+        data_type: numeric
+      - name: width_1
+        description: "Secondary width specification."
+        data_type: numeric
+      - name: length
+        description: "Length of the material."
+        data_type: numeric
+      - name: length_1
+        description: "Secondary length specification."
+        data_type: numeric
+      - name: feet
+        description: "Total feet of material on the purchase order line."
+        data_type: numeric
+
+      # Quantities
+      - name: pieces
+        description: "Number of pieces on the purchase order line."
+        data_type: int64
+      - name: weight
+        description: "Total weight of the material."
+        data_type: numeric
+
+      # Pricing and financials
+      - name: price
+        description: "Unit price for the material."
+        data_type: numeric
+      - name: amount
+        description: "Total dollar amount for the purchase order line."
+        data_type: numeric
+      - name: frt_amt
+        description: "Freight amount for the purchase order line."
+        data_type: numeric
+      - name: frt_cwt
+        description: "Freight cost per hundredweight (CWT)."
+        data_type: numeric
+      - name: gain_percent
+        description: "Gain percentage applied to the purchase order line."
+        data_type: numeric
+      - name: gain_override
+        description: "Override value for the gain calculation."
+        data_type: numeric
+      - name: direct_buyout
+        description: "Indicates if this is a direct buyout purchase."
+        data_type: boolean
+      - name: lock_actual_cost
+        description: "Flag to lock the actual cost for the purchase order line."
+        data_type: boolean
+
+      # Dates
+      - name: due_date
+        description: "Due date for delivery of the material."
+        data_type: date
+      - name: promise_date
+        description: "Promised delivery date from the vendor."
+        data_type: date
+      - name: firm_date
+        description: "Firm date for the purchase order line."
+        data_type: date
+      - name: roll_date
+        description: "Roll date for the material production."
+        data_type: date
+      - name: change_dt
+        description: "Date when the purchase order line was last changed."
+        data_type: datetime
+
+      # Flags
+      - name: received
+        description: "Flag indicating if the material has been received."
+        data_type: boolean
+      - name: paperwrap
+        description: "Flag indicating if paper wrap is required."
+        data_type: boolean
+      - name: spacers
+        description: "Flag indicating if spacers are required."
+        data_type: boolean
+      - name: fork_lift
+        description: "Flag indicating if forklift unloading is required."
+        data_type: boolean
+      - name: rear_unload
+        description: "Flag indicating if rear unloading is required."
+        data_type: boolean
+      - name: side_unload
+        description: "Flag indicating if side unloading is required."
+        data_type: boolean
+      - name: hide_width_length
+        description: "Flag to hide width and length on documentation."
+        data_type: boolean
+      - name: flaws_00
+        description: "Flag indicating flaws or quality issues."
+        data_type: boolean
+
+      # Comments and misc
+      - name: comment
+        description: "General comments for the purchase order line."
+        data_type: string
+      - name: comment_np
+        description: "Non-printable comments for internal use."
+        data_type: string
+      - name: comment_sales
+        description: "Sales-related comments for the purchase order line."
+        data_type: string
+      - name: comment_receiving
+        description: "Receiving-related comments for the purchase order line."
+        data_type: string
+      - name: misc_info
+        description: "Miscellaneous information for the purchase order line."
+        data_type: string
+
+  - name: base_po_header
+    description: "Base model for purchase order headers. Contains information about purchase orders including vendor details, shipping information, freight costs, and order dates."
+    columns:
+      # Primary key
+      - name: po_head_id
+        description: "Unique identifier for the purchase order header."
+        data_type: int64
+        tests:
+          - not_null
+          - unique
+
+      # Foreign keys
+      - name: vendor_id
+        description: "Foreign key to the vendor."
+        data_type: int64
+      - name: terms_id
+        description: "Foreign key to the payment terms."
+        data_type: int64
+      - name: ship_to_id
+        description: "Foreign key to the ship-to address."
+        data_type: int64
+      - name: warehouse_id
+        description: "Foreign key to the warehouse."
+        data_type: int64
+      - name: country_id
+        description: "Foreign key to the country."
+        data_type: int64
+      - name: fob_id
+        description: "Foreign key to the FOB (Free On Board) terms."
+        data_type: int64
+
+      # PO info
+      - name: po_number
+        description: "Purchase order number."
+        data_type: string
+      - name: rfq_number
+        description: "Request for quote number."
+        data_type: string
+      - name: reference
+        description: "Reference information for the purchase order."
+        data_type: string
+      - name: buyer
+        description: "Name of the buyer for the purchase order."
+        data_type: string
+      - name: terms
+        description: "Payment terms description."
+        data_type: string
+      - name: ship
+        description: "Shipping method or carrier."
+        data_type: string
+      - name: country_code
+        description: "Country code for the purchase order."
+        data_type: string
+
+      # Ship to info
+      - name: ship_to_name
+        description: "Name of the ship-to location."
+        data_type: string
+      - name: ship_to_type
+        description: "Type of ship-to location."
+        data_type: string
+      - name: ship_to_address
+        description: "Street address of the ship-to location."
+        data_type: string
+      - name: ship_to_city
+        description: "City of the ship-to location."
+        data_type: string
+      - name: ship_to_state
+        description: "State of the ship-to location."
+        data_type: string
+      - name: ship_to_zip
+        description: "ZIP code of the ship-to location."
+        data_type: string
+      - name: ship_to_phone
+        description: "Phone number of the ship-to location."
+        data_type: string
+      - name: ship_to_fax
+        description: "Fax number of the ship-to location."
+        data_type: string
+      - name: ship_to_contact
+        description: "Contact name at the ship-to location."
+        data_type: string
+
+      # Pricing and freight
+      - name: frt_amt
+        description: "Total freight amount for the purchase order."
+        data_type: numeric
+      - name: frt_cwt
+        description: "Freight cost per hundredweight (CWT)."
+        data_type: numeric
+      - name: flat_frt_amt
+        description: "Flat freight amount for the purchase order."
+        data_type: numeric
+      - name: fob_special
+        description: "Special FOB instructions or terms."
+        data_type: string
+
+      # Dates
+      - name: po_date
+        description: "Date the purchase order was created."
+        data_type: date
+      - name: po_due_date
+        description: "Due date for the purchase order."
+        data_type: date
+      - name: rfq_date
+        description: "Date of the request for quote."
+        data_type: date
+
+      # Flags
+      - name: blanket_po
+        description: "Flag indicating if this is a blanket purchase order."
+        data_type: boolean
+      - name: non_inv_po
+        description: "Flag indicating if this is a non-inventory purchase order."
+        data_type: boolean
+      - name: foreign_made
+        description: "Flag indicating if the material is foreign made."
+        data_type: boolean
+      - name: release_flag
+        description: "Flag indicating the release status of the purchase order."
+        data_type: boolean
+      - name: print_freight
+        description: "Flag indicating if freight should be printed on documents."
+        data_type: boolean
+      - name: processing_po
+        description: "Flag indicating if the purchase order is currently being processed."
+        data_type: boolean
+      - name: batch_print_status
+        description: "Status of batch printing for the purchase order."
+        data_type: int64
+
+      # Comments
+      - name: po_comment
+        description: "General comments for the purchase order."
+        data_type: string
+      - name: po_comment_np
+        description: "Non-printable comments for internal use."
+        data_type: string
+
+  - name: base_rw_po
+    description: "Base model for RW Purchase Orders data. Contains denormalized purchase order line information including PO details, item specifications, quantities, pricing, freight, comments, and mechanical property requirements. Each row represents a PO line."
+    columns:
+      # Keys
+      - name: po_id
+        description: "Identifier for the purchase order header (not unique - use with line_num for uniqueness)."
+        data_type: int64
+        tests:
+          - not_null
+
+      # Foreign keys
+      - name: vendor_id
+        description: "Foreign key to the vendor."
+        data_type: int64
+      - name: item_id
+        description: "Foreign key to the item master."
+        data_type: int64
+      - name: po_line_id
+        description: "Primary key for the PO line. Used for joining with base_po_line in staging models."
+        data_type: int64
+        tests:
+          - unique
+          - not_null
+      - name: document_attachments_po_head_id
+        description: "Foreign key to the document attachments PO head."
+        data_type: int64
+      - name: stock_items_warehouse_id
+        description: "Foreign key to the stock items warehouse."
+        data_type: int64
+      - name: stock_items_width
+        description: "Width from stock items."
+        data_type: numeric
+      - name: stock_items_length
+        description: "Length from stock items."
+        data_type: numeric
+
+      # PO info
+      - name: po_number
+        description: "Purchase order number."
+        data_type: string
+      - name: line_num
+        description: "Line number within the purchase order."
+        data_type: int64
+      - name: po_date
+        description: "Date the purchase order was created."
+        data_type: date
+      - name: due_date
+        description: "Due date for delivery of the material."
+        data_type: date
+      - name: firm_date
+        description: "Firm date for the purchase order line."
+        data_type: date
+      - name: promise_date
+        description: "Promised delivery date from the vendor."
+        data_type: date
+      - name: buyer
+        description: "Name of the buyer for the purchase order."
+        data_type: string
+      - name: ship_via
+        description: "Shipping method or carrier."
+        data_type: string
+      - name: warehouse
+        description: "Warehouse name or identifier."
+        data_type: string
+      - name: confirming
+        description: "Confirming flag or indicator."
+        data_type: boolean
+      - name: complete
+        description: "Flag indicating if the PO is complete."
+        data_type: boolean
+      - name: non_inv_po
+        description: "Flag indicating if this is a non-inventory purchase order."
+        data_type: boolean
+      - name: non_inv_po_line
+        description: "Flag indicating if this is a non-inventory purchase order line."
+        data_type: boolean
+      - name: direct_buy_out
+        description: "Indicates if this is a direct buyout purchase."
+        data_type: boolean
+      - name: ship_to_location
+        description: "Ship-to location name or identifier."
+        data_type: string
+
+      # Origin info
+      - name: country_of_origin
+        description: "Country of origin for the material."
+        data_type: string
+      - name: country_of_melt_and_pour
+        description: "Country where the material was melted and poured."
+        data_type: string
+      - name: importer_of_record
+        description: "Name of the importer of record for the material."
+        data_type: string
+      - name: foreign_made
+        description: "Flag indicating if the material is foreign made."
+        data_type: boolean
+
+      # Item attributes
+      - name: description
+        description: "Description of the item on the purchase order."
+        data_type: string
+      - name: mill
+        description: "Mill or manufacturer of the material."
+        data_type: string
+      - name: product_code
+        description: "Product code for the material."
+        data_type: string
+
+      # Dimensions
+      - name: gauge
+        description: "Gauge of the material."
+        data_type: numeric
+      - name: gauge_min
+        description: "Minimum gauge specification for the material."
+        data_type: numeric
+      - name: gauge_max
+        description: "Maximum gauge specification for the material."
+        data_type: numeric
+      - name: gauge_type
+        description: "Type of gauge measurement."
+        data_type: string
+      - name: width
+        description: "Width of the material."
+        data_type: numeric
+      - name: width_formatted
+        description: "Formatted width string for display."
+        data_type: string
+      - name: length
+        description: "Length of the material."
+        data_type: numeric
+      - name: length_formatted
+        description: "Formatted length string for display."
+        data_type: string
+      - name: feet
+        description: "Total feet of material on the purchase order."
+        data_type: numeric
+
+      # Quantities
+      - name: pieces
+        description: "Number of pieces on the purchase order."
+        data_type: int64
+      - name: weight
+        description: "Total weight of the material."
+        data_type: numeric
+      - name: tons
+        description: "Total tons of material."
+        data_type: numeric
+      - name: open_pieces
+        description: "Number of open (unreceived) pieces."
+        data_type: int64
+      - name: open_weight
+        description: "Open (unreceived) weight."
+        data_type: numeric
+      - name: open_tons
+        description: "Open (unreceived) tons."
+        data_type: numeric
+      - name: open_feet
+        description: "Open (unreceived) feet."
+        data_type: numeric
+
+      # Pricing
+      - name: po_price
+        description: "Unit price for the material."
+        data_type: numeric
+      - name: extension
+        description: "Extended price (price x quantity)."
+        data_type: numeric
+      - name: cost_um
+        description: "Cost unit of measure."
+        data_type: string
+      - name: po_currency
+        description: "Currency for the purchase order."
+        data_type: string
+      - name: po_currency_code
+        description: "Currency code for the purchase order."
+        data_type: string
+      - name: po_currency_price
+        description: "Price in PO currency."
+        data_type: numeric
+
+      # Freight
+      - name: freight_amt
+        description: "Freight amount for the purchase order."
+        data_type: numeric
+      - name: frt_cwt
+        description: "Freight cost per hundredweight (CWT)."
+        data_type: numeric
+      - name: frt_currency
+        description: "Currency for freight charges."
+        data_type: string
+      - name: frt_currency_code
+        description: "Currency code for freight charges."
+        data_type: string
+      - name: frt_currency_cwt
+        description: "Freight CWT in specified currency."
+        data_type: numeric
+
+      # Open amounts
+      - name: open_amount
+        description: "Open dollar amount remaining on the purchase order."
+        data_type: numeric
+      - name: open_frt_amount
+        description: "Open freight amount remaining."
+        data_type: numeric
+      - name: other_cost_amt
+        description: "Other cost amount."
+        data_type: numeric
+      - name: open_other_cost_amount
+        description: "Open other cost amount remaining."
+        data_type: numeric
+      - name: other_cost_descriptions
+        description: "Descriptions of other costs."
+        data_type: string
+
+      # Comments
+      - name: po_comment
+        description: "General comments for the purchase order."
+        data_type: string
+      - name: po_line_comments
+        description: "Comments for the purchase order line."
+        data_type: string
+      - name: po_line_comments_no_print
+        description: "Non-printable comments for the purchase order line."
+        data_type: string
+      - name: no_print_comments
+        description: "Comments that should not be printed."
+        data_type: string
+      - name: po_line_sales_comments
+        description: "Sales-related comments for the purchase order line."
+        data_type: string
+      - name: po_line_receiving_comments
+        description: "Receiving-related comments for the purchase order line."
+        data_type: string
+
+      # Mechanical properties: charpy
+      - name: charpy
+        description: "Charpy impact test value."
+        data_type: numeric
+      - name: charpy_2
+        description: "Secondary Charpy impact test value."
+        data_type: numeric
+      - name: charpy_scale
+        description: "Charpy test scale (e.g., ft-lbs)."
+        data_type: string
+      - name: charpy_scale_2
+        description: "Secondary Charpy test scale."
+        data_type: string
+
+      # Mechanical properties: yield
+      - name: yield_act
+        description: "Actual yield strength value."
+        data_type: numeric
+      - name: yield_max
+        description: "Maximum yield strength specification."
+        data_type: numeric
+      - name: yield_min
+        description: "Minimum yield strength specification."
+        data_type: numeric
+      - name: yield_act_2
+        description: "Secondary actual yield strength value."
+        data_type: numeric
+      - name: yield_max_2
+        description: "Secondary maximum yield strength specification."
+        data_type: numeric
+      - name: yield_min_2
+        description: "Secondary minimum yield strength specification."
+        data_type: numeric
+      - name: yield_psi_ksi
+        description: "Yield strength unit (PSI or KSI)."
+        data_type: string
+      - name: yield_psi_ksi_2
+        description: "Secondary yield strength unit (PSI or KSI)."
+        data_type: string
+
+      # Mechanical properties: tensile
+      - name: tensile_act
+        description: "Actual tensile strength value."
+        data_type: numeric
+      - name: tensile_max
+        description: "Maximum tensile strength specification."
+        data_type: numeric
+      - name: tensile_min
+        description: "Minimum tensile strength specification."
+        data_type: numeric
+      - name: tensile_act_2
+        description: "Secondary actual tensile strength value."
+        data_type: numeric
+      - name: tensile_max_2
+        description: "Secondary maximum tensile strength specification."
+        data_type: numeric
+      - name: tensile_min_2
+        description: "Secondary minimum tensile strength specification."
+        data_type: numeric
+      - name: tensile_psi_ksi
+        description: "Tensile strength unit (PSI or KSI)."
+        data_type: string
+      - name: tensile_psi_ksi_2
+        description: "Secondary tensile strength unit (PSI or KSI)."
+        data_type: string
+
+      # Mechanical properties: elongation
+      - name: elongation_act
+        description: "Actual elongation percentage value."
+        data_type: numeric
+      - name: elongation_max
+        description: "Maximum elongation percentage specification."
+        data_type: numeric
+      - name: elongation_min
+        description: "Minimum elongation percentage specification."
+        data_type: numeric
+      - name: elongation_act_2
+        description: "Secondary actual elongation percentage value."
+        data_type: numeric
+      - name: elongation_max_2
+        description: "Secondary maximum elongation percentage specification."
+        data_type: numeric
+      - name: elongation_min_2
+        description: "Secondary minimum elongation percentage specification."
+        data_type: numeric
+
+      # Mechanical properties: rockwell
+      - name: rockwell_act
+        description: "Actual Rockwell hardness value."
+        data_type: numeric
+      - name: rockwell_max
+        description: "Maximum Rockwell hardness specification."
+        data_type: numeric
+      - name: rockwell_min
+        description: "Minimum Rockwell hardness specification."
+        data_type: numeric
+      - name: rockwell_act_2
+        description: "Secondary actual Rockwell hardness value."
+        data_type: numeric
+      - name: rockwell_scale
+        description: "Rockwell hardness scale (e.g., HRB, HRC)."
+        data_type: string
+      - name: rockwell_scale_2
+        description: "Secondary Rockwell hardness scale."
+        data_type: string
+
+      # Mechanical properties: other
+      - name: brinell_2
+        description: "Brinell hardness value."
+        data_type: numeric
+      - name: olsen_act
+        description: "Actual Olsen cup test value."
+        data_type: numeric
+      - name: olsen_max
+        description: "Maximum Olsen cup test specification."
+        data_type: numeric
+      - name: olsen_min
+        description: "Minimum Olsen cup test specification."
+        data_type: numeric
+      - name: n_value_act
+        description: "Actual n-value (strain hardening exponent)."
+        data_type: numeric
+      - name: n_value_max
+        description: "Maximum n-value specification."
+        data_type: numeric
+      - name: n_value_min
+        description: "Minimum n-value specification."
+        data_type: numeric
+      - name: r_value_act
+        description: "Actual r-value (plastic strain ratio)."
+        data_type: numeric
+      - name: r_value_max
+        description: "Maximum r-value specification."
+        data_type: numeric
+      - name: r_value_min
+        description: "Minimum r-value specification."
+        data_type: numeric
+
+  - name: base_supplies_po
+    description: "Base model for supplies purchase orders, sourced from the BigQuery table PO_export.supplies_export. Contains purchase order data for supplies including vendor details, part numbers, quantities, and pricing."
+    columns:
+      - name: supplies_po_line_id
+        description: "Unique identifier for the supplies purchase order line."
+        tests:
+          - unique
+          - not_null
+      - name: po_number
+        description: "Purchase order number for the supplies order."
+        tests:
+          - not_null
+      - name: part_number
+        description: "Part number for the supply item."
+        tests:
+          - not_null
+      - name: vendor_part_number
+        description: "Vendor's part number for the supply item."
+      - name: vendor_name
+        description: "Name of the vendor supplying the item."
+      - name: vendor_description
+        description: "Vendor's description of the item."
+      - name: description
+        description: "Description of the supply item."
+      - name: order_qty
+        description: "Quantity ordered."
+      - name: u_m
+        description: "Unit of measure for the order quantity."
+      - name: pkg_qty
+        description: "Package quantity."
+      - name: price_per_unit
+        description: "Price per unit for the supply item. For most items this comes directly from the source price field; for vendor_description = 'Thermal Transfer Paper Label 10060' it is adjusted as price * pkg_qty / order_qty to reflect the effective per-unit price."
+      - name: total_price
+        description: "Total price for the supply line, calculated as price_per_unit multiplied by pkg_qty when pkg_qty is present, otherwise by order_qty."
+      - name: inserted_at
+        description: "Timestamp when the record was inserted."
+      - name: promise_date
+        description: "Promised delivery date from the vendor."

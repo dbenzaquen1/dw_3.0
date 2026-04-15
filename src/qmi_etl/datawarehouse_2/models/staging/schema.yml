@@ -1,0 +1,1384 @@
+version: 2
+
+models:
+  - name: stg_salesperson
+
+    columns:
+      - name: salesperson_id
+        description: This is a unique identifier for a customer.
+        tests:
+          - unique
+          - not_null
+
+      - name: credit_limit
+        description: This is the salesperson's max credit limit.
+
+      - name: first_name
+        description: The salespersons first name.
+
+      - name: last_name
+        description: The salespersons last name.
+      - name: full_name
+        description: The salespersons first and last name.
+      - name: email
+        description: The email associated with the salesperson.
+      - name: is_active
+        description: A flag is the salesperson is an active employee.
+  - name: stg_customer
+    description: A table that contains the flattened data from the Customer table. It includes customer information, contact details, and associated metadata.
+    columns:
+      - name: customer_id
+        description: The unique identifier for the customer.
+        tests:
+          - unique
+          - not_null
+
+      - name: route_id
+        description: The identifier for the customer's route.
+
+      - name: region_id
+        description: The identifier for the customer's region.
+
+      - name: tax_code
+        description: The tax code associated with the customer.
+
+      - name: address_id
+        description: The unique identifier for the customer's address.
+
+      - name: customer_fax
+        description: The fax number associated with the customer.
+
+      - name: customer_name
+        description: The name of the customer.
+
+      - name: customer_phone
+        description: The phone number of the customer.
+
+      - name: customer_email
+        description: The email address of the customer.
+
+      - name: customer_website
+        description: The website URL of the customer.
+
+      - name: customer_comments
+        description: Additional comments related to the customer.
+
+      - name: fax_invoice
+        description: The fax number associated with the customer for invoicing .
+
+      - name: email_invoice
+        description: The email associated with the customer for invoicing .
+
+      - name: credit_limit
+        description: The customer's credit limit.
+
+      - name: customer_code
+        description: A unique code associated with the customer.
+
+      - name: salesperson_1
+        description: The first salesperson assigned to the customer.
+
+      - name: salesperson_2
+        description: The second salesperson assigned to the customer.
+
+      - name: sales_comments
+        description: Comments related to the customer's sales history.
+      - name: customer_create_date
+        description: The date the customer was created.
+      - name: has_statement
+        description: A flag indicating whether the customer has a statement.
+      - name: discount_days
+        description: Number of days within which a discount is available for payment terms.
+      - name: due_days
+        description: Number of days until the payment is due for payment terms.
+      - name: discount_percent
+        description: Discount percentage available if paid within the discount days for payment terms.
+      - name: terms_name
+        description: Name or description of the payment terms.
+  - name: stg_production_order_line
+    description: |
+      The stg_production_order_line model is a comprehensive model that combines data from multiple sources including base_production_orders_finished_goods, base_production_order_performance, base_production_orders_history, and base_production_order_header. It contains detailed information about each production order line, including finished goods details, performance metrics, history, and header information.
+      
+      **Data Source Dependencies:**
+      This model references `base_production_orders_finished_goods` as the primary source, and joins with other tables to enrich the data.
+      
+      **Timestamp Logic:**
+      The model includes three timestamp fields:
+      - `modified_timestamp`: From the production order header, indicating when the order was last modified
+      - `most_recent_transaction_timestamp`: The most recent transaction timestamp from the production order history
+      - `most_recent_timestamp`: A calculated field that prioritizes transaction_timestamp, falling back to modified_timestamp only when transaction_timestamp is null
+    columns:
+      - name: production_order_line_id
+        description: Unique identifier for each production order line. This is a primary key in the stg_production_order_line model.
+        data_type: int64
+        quote: true
+      - name: production_order_finished_id
+        description: Unique identifier for the finished production order.
+        data_type: int64
+        quote: true
+      - name: finished_inventory_id
+        description: The unique identifier for the finished inventory item in the production order.
+        data_type: int64
+        quote: true
+      - name: order_line_id
+        description: The unique identifier for the order line associated with the production order line.
+        data_type: int64
+        quote: true
+      - name: warehouse_id
+        description: The unique identifier for the warehouse where the production order is being processed.
+        data_type: int64
+        quote: true
+      - name: order_id
+        description: Unique identifier for the order associated with the production order line.
+        data_type: int64
+        quote: true
+      - name: tag_id
+        description: Unique identifier for the inventory tag associated with the production order.
+        data_type: string
+        quote: true
+      - name: item_id
+        description: Unique identifier for the item associated with the production order.
+        data_type: int64
+        quote: true
+      - name: parent_inventory_id
+        description: Unique identifier for the parent inventory item.
+        data_type: int64
+        quote: true
+      - name: finished_material_comments
+        description: Comments associated with the finished material.
+        data_type: string
+        quote: true
+      - name: created_username
+        description: The username of the user who created the production order.
+        data_type: string
+        quote: true
+      - name: modified_username
+        description: The username of the user who last modified the production order.
+        data_type: string
+        quote: true
+      - name: production_line_comments
+        description: Comments associated with the production line.
+        data_type: string
+        quote: true
+      - name: warehouse_name
+        description: The name of the warehouse where the production order is processed.
+        data_type: string
+        quote: true
+      - name: line_produced_by
+        description: The username of the user who performed the most recent production transaction. This field comes from the most recent production history record. This means it will only show production as the user, not modified from costing.
+        data_type: string
+        quote: true
+      - name: machine
+        description: The machine used for the production order. This field comes from the most recent production history record.
+        data_type: string
+        quote: true
+      - name: production_order_number
+        description: The production order number associated with the production order line. This is sourced from the production order header.
+        data_type: string
+        quote: true
+      - name: has_sales_order
+        description: Boolean flag indicating if the finished good is associated with a sales order.
+        data_type: boolean
+        quote: true
+      - name: is_rewrap
+        description: Boolean flag indicating if the finished good is a rewrap.
+        data_type: boolean
+        quote: true
+      - name: is_parent
+        description: Boolean flag indicating if the inventory item is a parent item.
+        data_type: boolean
+        quote: true
+      - name: finished_length
+        description: The length of the finished goods produced.
+        data_type: numeric
+        quote: true
+      - name: finished_width
+        description: The width of the finished goods produced.
+        data_type: numeric
+        quote: true
+      - name: finished_feet
+        description: The total feet of the finished goods.
+        data_type: numeric
+        quote: true
+      - name: finished_weight
+        description: The total weight of the finished goods produced.
+        data_type: numeric
+        quote: true
+      - name: wip_weight
+        description: The weight of the work in progress (WIP).
+        data_type: numeric
+        quote: true
+      - name: finished_pieces
+        description: The number of pieces of finished goods produced.
+        data_type: int64
+        quote: true
+      - name: wip_pieces
+        description: The number of pieces of work in progress (WIP).
+        data_type: int64
+        quote: true
+      - name: finished_machine_minutes
+        description: The total machine minutes spent on the production of the finished goods.
+        data_type: int64
+        quote: true
+      - name: modified_timestamp
+        description: The timestamp when the production order was last modified in the header table.
+        data_type: timestamp
+        quote: true
+      - name: most_recent_transaction_timestamp
+        description: The timestamp of the most recent transaction from the production order history. This is derived by selecting the transaction with the latest transaction_timestamp for each production_order_line_id. Note that this field uses the most recent production history record.
+        data_type: timestamp
+        quote: true
+      - name: most_recent_timestamp
+        description: |
+          A calculated field that prioritizes transaction_timestamp over modified_timestamp.
+          
+          **Logic:**
+          - If most_recent_transaction_timestamp is null, returns modified_timestamp
+          - Otherwise, returns most_recent_transaction_timestamp
+        data_type: timestamp
+        quote: true
+  - name: stg_inventory
+    description: |
+      The stg_inventory model combines data from base_inventory, inventory_status_seed, stg_inventory_locations, and base_inventory_classifcations. It includes identifiers (inventory_id, tag_id, item_id_width), weights (weight, weight_reserved, weight_available), dimensions, status and location fields, classification_description, and calculated fields (is_in_inventory, is_child, is_parent, days_in_inventory, inventory_aging_bucket, is_coil).
+    columns:
+      - name: inventory_id
+        description: Unique identifier for each inventory item. This is an integer value and is the primary key for the inventory table.
+        data_type: int64
+        quote: true
+      - name: tag_id
+        description: Unique identifier for each tag associated with an inventory item. This is a string value and can be used to track and categorize inventory items.
+        data_type: string
+        quote: true
+      - name: warehouse_id
+        description: Unique identifier for each warehouse where inventory items are stored. This is an integer value and can be used to track the location of inventory items.
+        data_type: int64
+        quote: true
+      - name: vendor_id
+        description: An integer identifier for the vendor associated with the inventory item. This is a foreign key that links to the vendor table.
+        data_type: int64
+        quote: true
+      - name: gauge_id
+        description: An integer identifier for the gauge of the inventory item. This is a foreign key that links to the gauge table.
+        data_type: int64
+        quote: true
+      - name: po_number
+        description: A string identifier for the purchase order number associated with the inventory item. This is used to track inventory items back to their original purchase orders.
+        data_type: string
+        quote: true
+      - name: po_line
+        description: The 'po_line' column represents the line number of the purchase order. It is an integer value that helps in identifying the specific line item in a purchase order.
+        data_type: int64
+        quote: true
+      - name: item_id
+        description: The 'item_id' column is a unique identifier for each item in the inventory. It is an integer value that helps in tracking and managing individual items in the inventory system.
+        data_type: int64
+        quote: true
+      - name: item_id_width
+        description: Composite key combining item_id and width, formatted as 'item_id-width'. If width is null, contains just the item_id as a string. Used for joining with item master.
+        data_type: string
+        quote: true
+      - name: location_id
+        description: The 'location_id' column represents the unique identifier for each location in the warehouse. It is an integer value that helps in tracking the exact location of an item in the warehouse.
+        data_type: int64
+        quote: true
+      - name: parent_inventory_id
+        description: An integer identifier for the parent inventory. If an inventory item is a child of another inventory item, this field will contain the inventory_id of the parent item. If the inventory item is not a child of any other inventory item, this field will be null.
+        data_type: int64
+        quote: true
+      - name: piw
+        description: A numeric field representing the 'Pounds per Inch Width' of the inventory item. This is a measure of the density of the material.
+        data_type: numeric
+        quote: true
+      - name: feet
+        description: A numeric field representing the length of the inventory item in feet. This is used to calculate the total weight of the item.
+        data_type: numeric
+        quote: true
+      - name: length
+        description: The length of the inventory item. This is a numeric value that represents the length of the item in the unit of measurement used by the warehouse. This value is used in various calculations related to the inventory management.
+        data_type: numeric
+        quote: true
+      - name: pieces
+        description: The number of pieces of the inventory item. This is an integer value that represents the total number of individual pieces of the item in the inventory. This value is used to track the quantity of the item in the inventory.
+        data_type: int64
+        quote: true
+      - name: weight
+        description: The weight of the inventory item. This is a numeric value that represents the weight of the item in the unit of measurement used by the warehouse. This value is used in various calculations related to the inventory management and shipping.
+        data_type: numeric
+        quote: true
+      - name: freight
+        description: The freight column represents the cost of transporting the inventory item from the vendor to the warehouse. It is a numeric value.
+        data_type: numeric
+        quote: true
+      - name: Qty
+        description: The Qty column represents the quantity of the inventory item currently in stock. It is an integer value.
+        data_type: int64
+        quote: true
+      - name: qty_on_order
+        description: The qty_on_order column represents the quantity of the inventory item that is currently on order but has not yet been received. It is an integer value.
+        data_type: int64
+        quote: true
+      - name: feet_on_order
+        description: This column represents the total feet of inventory that is currently on order. It is a numeric field and can contain decimal values.
+        data_type: numeric
+        quote: true
+      - name: weight_on_order
+        description: This column represents the total weight of the inventory that is currently on order. It is a numeric field and can contain decimal values.
+        data_type: numeric
+        quote: true
+      - name: weight_reserved_hard
+        description: The weight that is hard-reserved (committed) for orders. Sourced from base_inventory (WeightReservedHard).
+        data_type: numeric
+        quote: true
+      - name: weight_reserved
+        description: Alias for weight_reserved_hard. The weight reserved for orders.
+        data_type: numeric
+        quote: true
+      - name: weight_available
+        description: Weight available for new orders. Calculated as weight minus weight_reserved_hard.
+        data_type: numeric
+        quote: true
+      - name: Cost
+        description: This column represents the cost of the inventory. It is a numeric field and can contain decimal values.
+        data_type: numeric
+        quote: true
+      - name: status_code
+        description: The status code of the inventory item. This is a string value that represents the current status of the item in the inventory. It is used in conjunction with the 'dim_status' table to provide a description of the status.
+        data_type: string
+        quote: true
+      - name: item_number
+        description: The unique identifier for each item in the inventory. This is a string value that is used to track and manage items in the inventory system.
+        data_type: string
+        quote: true
+      - name: mic_1
+        description: This is a numeric value that represents the first measurement of the item's thickness in micrometers. It is used in quality control and inventory management.
+        data_type: numeric
+        quote: true
+      - name: mic_2
+        description: The second measurement of the thickness of the metal coil in micrometers. This is used to ensure the consistency of the thickness across the coil.
+        data_type: numeric
+        quote: true
+      - name: width
+        description: The width of the inventory item in the specified unit. This is a critical dimension for inventory items, especially for items like metal sheets and coils.
+        data_type: numeric
+        quote: true
+      - name: thickness
+        description: The thickness of the inventory item in the specified unit. This is a critical dimension for inventory items, especially for items like metal sheets and coils.
+        data_type: numeric
+        quote: true
+      - name: diffrence_nom_mic
+        description: This field represents the difference between the nominal and actual micrometer measurements of the inventory item. It is a numeric field and can be used to assess the quality and precision of the inventory items.
+        data_type: numeric
+        quote: true
+      - name: receiving_date
+        description: This field represents the date when the inventory item was received in the warehouse. It is a date field and can be used to track the age of the inventory, calculate inventory turnover rates, and manage stock levels.
+        data_type: date
+        quote: true
+      - name: classification_id
+        description: Foreign key to the inventory classification (base_inventory_classifcations). Identifies the classification category of the inventory item.
+        data_type: int64
+        quote: true
+      - name: customer_id_reserved
+        description: Reserved customer ID for the inventory row; normalized to null when the source value is 0 in base_inventory.
+        data_type: int64
+        quote: true
+      - name: is_customer_reserved
+        description: Boolean flag indicating whether the inventory row is reserved for a customer (true when customer_id_reserved is populated).
+        data_type: boolean
+        quote: true
+      - name: status_description
+        description: This field provides a description of the status of the inventory item. It is a string field and is derived from the 'status_code' field by joining with the 'inventory_status_seed' table. It provides more detailed and human-readable information about the inventory status.
+        data_type: string
+        quote: true
+      - name: classification_description
+        description: Human-readable description of the inventory classification. Sourced from base_inventory_classifcations via classification_id.
+        data_type: string
+        quote: true
+      - name: is_in_inventory
+        description: A boolean field indicating whether the item is currently in inventory. If the status code of the item is 'I' or 'W', the item is considered to be in inventory and this field is set to TRUE. Otherwise, it is set to FALSE.
+        data_type: boolean
+        quote: true
+      - name: location_name
+        description: The name of the location where the item is stored. This field is populated by joining the base inventory data with the stg_inventory_locations data on the location_id field.
+        data_type: string
+        quote: true
+      - name: Warehouse
+        description: The name of the warehouse where the item is stored. This field is populated by joining the base inventory data with the stg_inventory_locations data on the location_id field.
+        data_type: string
+        quote: true
+      - name: is_excess
+        description: A boolean field indicating whether the inventory item is in excess. If true, the item is in excess, otherwise it is not.
+        data_type: boolean
+        quote: true
+      - name: is_inactive
+        description: A boolean field indicating whether the inventory item is inactive. If true, the item is inactive, otherwise it is active.
+        data_type: boolean
+        quote: true
+      - name: is_child
+        description: A boolean field indicating whether the inventory item is a child item. If true, the item is a child item, otherwise it is not a child item.
+        data_type: boolean
+        quote: true
+      - name: is_parent
+        description: A boolean field indicating whether the inventory item is a parent item. If the inventory_id is found in the parent_inventory_id column of the base_inv table, then this field is set to TRUE, otherwise FALSE.
+        data_type: boolean
+        quote: true
+      - name: days_in_inventory
+        description: This field represents the number of days the item has been in inventory. If the item is in inventory (is_in_inventory = TRUE), it is calculated as the difference between the current date and the receiving date. If the item is not in inventory, the value is 0.
+        data_type: int64
+        quote: true
+      - name: inventory_aging_bucket
+        description: This field categorizes the age of the inventory item into different buckets based on the number of days in inventory. The buckets are '0 - 89', '90 - 119', '120 - 179', '180 - 269', '270 - 360', and 'Over 1 Year'. If the days_in_inventory is not within these ranges, the value is NULL.
+        data_type: string
+        quote: true
+      - name: is_coil
+        description: A boolean flag indicating whether the inventory item is a coil. If the length of the item is 0, the item is considered a coil and the flag is set to TRUE. Otherwise, the flag is set to FALSE.
+        data_type: boolean
+        quote: true
+  - name: stg_inventory_snapshot
+    description: |
+      The stg_inventory_snapshot model is a comprehensive snapshot of the inventory data. It includes details about the inventory such as inventory_id, tag_id, warehouse_id, vendor_id, gauge_id, po_number, po_line, item_id, location_id, parent_inventory_id, piw, feet, length, pieces, weight, freight, Qty, qty_on_order, feet_on_order, weight_on_order, Cost, status_code, item_number, mic_1, mic_2, width, thickness, diffrence_nom_mic, receiving_date, snapshot_timestamp, snapshot_date, status_description, is_in_inventory, location_name, Warehouse, is_excess, is_inactive, in_from_completed_order, has_attached_invoice, is_child, is_parent, days_in_inventory, inventory_aging_bucket, is_coil. The model is derived from the base_inventory_snapshot, inventory_status_seed, stg_inventory_locations, and stg_orders tables. It includes calculated fields such as is_in_inventory, in_from_completed_order, has_attached_invoice, is_child, is_parent, days_in_inventory, inventory_aging_bucket, is_coil which are derived based on the business rules and other fields in the model.
+      
+      **Data Source Dependencies:**
+      This model uses `stg_orders` to determine order-related inventory flags. The `in_from_completed_order` and `has_attached_invoice` fields are calculated by checking if the inventory tag_id exists in the stg_orders table. This creates a dependency on the conditional inventory join logic implemented in stg_orders, where inventory tags may come from either invoice inventory records or finished item inventory records.
+    columns:
+      - name: inventory_id
+        description: This is a unique identifier for each inventory item. It is an integer value and is automatically generated by the system.
+        data_type: int64
+        quote: true
+      - name: tag_id
+        description: This is a string value that represents the tag associated with each inventory item. It is used for tracking and identification purposes within the warehouse.
+        data_type: string
+        quote: true
+      - name: warehouse_id
+        description: This is a unique identifier for each warehouse. It is an integer value and is automatically generated by the system. It is used to track which warehouse an inventory item is stored in.
+        data_type: int64
+        quote: true
+      - name: vendor_id
+        description: An integer identifier for the vendor associated with the inventory item. This is a foreign key that links to the vendor table.
+        data_type: int64
+        quote: true
+      - name: gauge_id
+        description: An integer identifier for the gauge of the inventory item. This is a foreign key that links to the gauge table.
+        data_type: int64
+        quote: true
+      - name: po_number
+        description: A string identifier for the purchase order number associated with the inventory item. This is used to track inventory items back to their original purchase orders.
+        data_type: string
+        quote: true
+      - name: po_line
+        description: The 'po_line' column represents the line number of the purchase order. It is an integer value that helps in identifying the specific line item in a purchase order.
+        data_type: int64
+        quote: true
+      - name: item_id
+        description: The 'item_id' column is an integer that uniquely identifies each item in the inventory. This ID is used to track and manage items across various operations and transactions.
+        data_type: int64
+        quote: true
+      - name: location_id
+        description: The 'location_id' column is an integer that represents the unique identifier for the location of the item in the warehouse. This ID is used to track the exact location of an item in the warehouse for efficient inventory management.
+        data_type: int64
+        quote: true
+      - name: parent_inventory_id
+        description: This is an integer field that represents the ID of the parent inventory. If an inventory item is a child of another inventory item, this field will contain the ID of the parent inventory. If the inventory item is not a child of any other inventory, this field will be NULL.
+        data_type: int64
+        quote: true
+      - name: piw
+        description: This is a numeric field that represents the 'Pounds per Inch Width' of the inventory item. It is a measure of the density of the material.
+        data_type: numeric
+        quote: true
+      - name: feet
+        description: This is a numeric field that represents the length of the inventory item in feet. It is used to measure the size of the inventory item.
+        data_type: numeric
+        quote: true
+      - name: length
+        description: The length of the inventory item. This is a numeric value that represents the length of the item in the inventory. It is measured in the standard unit of length.
+        data_type: numeric
+        quote: true
+      - name: pieces
+        description: The number of pieces of the inventory item. This is an integer value that represents the total number of pieces of the item in the inventory.
+        data_type: int64
+        quote: true
+      - name: weight
+        description: The weight of the inventory item. This is a numeric value that represents the weight of the item in the inventory. It is measured in the standard unit of weight.
+        data_type: numeric
+        quote: true
+      - name: freight
+        description: The freight column represents the cost of transporting goods from the vendor to the warehouse. It is a numeric value that can be used to calculate the total cost of an inventory item.
+        data_type: numeric
+        quote: true
+      - name: Qty
+        description: The Qty column represents the quantity of a specific item in the inventory. It is an integer value that can be used to track the amount of inventory available for a specific item.
+        data_type: int64
+        quote: true
+      - name: qty_on_order
+        description: The qty_on_order column represents the quantity of a specific item that is currently on order. It is an integer value that can be used to track the amount of inventory that is expected to be received in the future.
+        data_type: int64
+        quote: true
+      - name: feet_on_order
+        description: This column represents the total feet of inventory that is currently on order. It is a numeric field that can contain decimal values.
+        data_type: numeric
+        quote: true
+      - name: weight_on_order
+        description: This column represents the total weight of the inventory that is currently on order. It is a numeric field that can contain decimal values.
+        data_type: numeric
+        quote: true
+      - name: Cost
+        description: This column represents the cost of the inventory. It is a numeric field that can contain decimal values.
+        data_type: numeric
+        quote: true
+      - name: status_code
+        description: The status code of the inventory item. This is a string value that represents the current status of the item in the inventory. It is used in conjunction with the 'dim_status' table to provide a description of the status.
+        data_type: string
+        quote: true
+      - name: item_number
+        description: The unique identifier for each item in the inventory. This is a string value that is used to track and manage items throughout their lifecycle in the inventory.
+        data_type: string
+        quote: true
+      - name: mic_1
+        description: This is a numeric value representing the first measurement of the item's thickness in micrometers. It is used in quality control and inventory management processes.
+        data_type: numeric
+        quote: true
+      - name: mic_2
+        description: This column represents the second measurement of the material's thickness in micrometers. It is a numeric value.
+        data_type: numeric
+        quote: true
+      - name: width
+        description: This column represents the width of the inventory item. It is a numeric value.
+        data_type: numeric
+        quote: true
+      - name: thickness
+        description: This column represents the thickness of the inventory item. It is a numeric value.
+        data_type: numeric
+        quote: true
+      - name: diffrence_nom_mic
+        description: This column represents the difference between the nominal and actual micrometer measurements of the inventory item. It is a numeric value that can be used to assess the quality and precision of the item.
+        data_type: numeric
+        quote: true
+      - name: receiving_date
+        description: This column represents the date when the inventory item was received in the warehouse. It is stored in the date format and can be used to track the age of the inventory and manage stock rotation.
+        data_type: date
+        quote: true
+      - name: snapshot_timestamp
+        description: This column represents the exact date and time when the inventory snapshot was taken. It is stored in the datetime format and can be used to track changes in the inventory over time.
+        data_type: datetime
+        quote: true
+      - name: snapshot_date
+        description: The date when the snapshot of the inventory was taken. This is useful for tracking changes in the inventory over time.
+        data_type: date
+        quote: true
+      - name: status_description
+        description: A description of the current status of the inventory item. This is derived from the 'status_code' field in the 'base_inventory_snapshot' table, and provides a human-readable explanation of the status code.
+        data_type: string
+        quote: true
+      - name: is_in_inventory
+        description: A boolean field indicating whether the inventory item is currently in stock. This is determined based on the 'status_code' field in the 'base_inventory_snapshot' table, with a value of 'I' or 'W' indicating that the item is in inventory.
+        data_type: boolean
+        quote: true
+      - name: location_name
+        description: The name of the location where the inventory item is stored. This is a string field and can contain alphanumeric characters.
+        data_type: string
+        quote: true
+      - name: Warehouse
+        description: The name of the warehouse where the inventory item is stored. This is a string field and can contain alphanumeric characters.
+        data_type: string
+        quote: true
+      - name: is_excess
+        description: A boolean field indicating whether the inventory item is in excess. If the value is true, it means the item is in excess. If the value is false, it means the item is not in excess.
+        data_type: boolean
+        quote: true
+      - name: is_inactive
+        description: A boolean field indicating whether the inventory item is inactive. True if the item is inactive, false otherwise.
+        data_type: boolean
+        quote: true
+      - name: in_from_completed_order
+        description: A boolean field indicating whether the inventory item is from a completed order. True if the item is from a completed order, false otherwise.
+        data_type: boolean
+        quote: true
+      - name: has_attached_invoice
+        description: A boolean field indicating whether the inventory item has an attached invoice. True if the item has an attached invoice, false otherwise.
+        data_type: boolean
+        quote: true
+      - name: is_child
+        description: A boolean flag indicating if the inventory item is a child item. This is determined by checking if the inventory item's parent_inventory_id is not null and different from its own inventory_id.
+        data_type: boolean
+        quote: true
+      - name: is_parent
+        description: A boolean flag indicating if the inventory item is a parent item. This is determined by checking if the inventory item's inventory_id is present in the parent_inventory_id column of the base inventory snapshot.
+        data_type: boolean
+        quote: true
+      - name: days_in_inventory
+        description: This is a calculated field that represents the number of days the inventory item has been in inventory. If the item is not in inventory (is_in_inventory = FALSE), this value is 0. Otherwise, it is the difference in days between the current date and the receiving date of the inventory item.
+        data_type: int64
+        quote: true
+      - name: inventory_aging_bucket
+        description: This column categorizes the number of days an item has been in inventory into various buckets. The buckets are '0 - 89', '90 - 119', '120 - 179', '180 - 269', '270 - 360', and 'Over 1 Year'. If the item is not in inventory, this field is NULL.
+        data_type: string
+        quote: true
+      - name: is_coil
+        description: This is a boolean field that indicates whether the item is a coil. If the length of the item is 0, then it is considered a coil and the field is set to TRUE. Otherwise, it is set to FALSE.
+        data_type: boolean
+        quote: true
+  - name: stg_ar_journal
+    description: Staging model for AR journal entries, selecting all columns from the base_AR_journal model for further transformation or analysis.
+    columns:
+      - name: ar_journal_id
+        description: Unique identifier for the AR journal entry.
+      - name: invoice_number
+        description: Invoice number associated with the AR journal entry.
+      - name: payment_id
+        description: Payment identifier associated with the AR journal entry.
+      - name: customer_id
+        description: Customer identifier associated with the AR journal entry.
+      - name: amount_pieces
+        description: Number of pieces in the AR journal entry.
+      - name: amount_feet
+        description: Number of feet in the AR journal entry.
+      - name: days_from_transaction
+        description: Number of days from the transaction date to today.
+      - name: amount_open
+        description: The open amount for the AR journal entry.
+      - name: is_open_invoice
+        description: Boolean flag indicating if the invoice is open (open amount > 0).
+      - name: amount_discount
+        description: Discount amount applied to the AR journal entry.
+      - name: amount_original
+        description: Original amount of the AR journal entry before discounts.
+      - name: total_amount
+        description: Total amount after discounts (original amount minus discount amount).
+      - name: transaction_date
+        description: The date of the AR journal transaction.
+      - name: due_date
+        description: The date the invoice is due, calculated as transaction_date plus due_days from the customer.
+      - name: discount_date
+        description: The last date a discount is available, calculated as transaction_date plus discount_days from the customer.
+
+  - name: stg_metal_prices
+    description: |
+      Staging model that combines daily CRU (Commodity Research Unit) pricing data with aluminum ingot pricing data
+      to create a unified view of metal pricing by date. This model prioritizes CRU data over aluminum ingot data
+      when both sources are available for the same date.
+      
+      The model filters CRU data to include only 'Base' and 'Standard' pricing types, excluding 'Hot Dipped Galvanised'
+      items with 'Standard' pricing type. It joins this data with aluminum ingot pricing and date dimension
+      to ensure complete date coverage.
+    columns:
+      - name: reporting_date
+        description: The date for which the metal pricing data is reported. This is the primary date dimension used for joining and analysis.
+        data_type: date
+        tests:
+          - not_null
+
+      
+      - name: cost_amount
+        description: |
+          The cost amount per pound for the metal. This field uses a priority logic:
+          1. Uses CRU price_value_per_pound if available
+          2. Falls back to aluminum ingot midwest_price if CRU data is null
+          3. Returns null if both sources are unavailable
+        data_type: numeric
+      
+      - name: metal_sub_type
+        description: |
+          The type or description of the metal. This field uses a priority logic:
+          1. Uses CRU metal_sub_type if available
+          2. Falls back to aluminum ingot type_description if CRU data is null
+          3. Returns null if both sources are unavailable
+        data_type: string
+      
+      - name: data_source
+        description: |
+          Indicates the source of the pricing data for debugging and data lineage purposes.
+          Values: 'CRU' (Commodity Research Unit), 'Aluminum Ingot', or 'No Data' when both sources are null.
+        data_type: string
+
+  - name: stg_orders
+    description: |
+      The stg_orders model is a comprehensive staging model that combines data from multiple sources to provide
+      a unified view of order information. It combines order line items, order headers, invoices, inventory records,
+      salesperson details, and order status information.
+      
+      **Key Features:**
+      - Combines order line and header data with invoice and inventory information
+      - Includes primary and secondary salesperson details
+      - Calculates order status flags (is_late_order, is_credited_order, short_ship_order, over_ship_order)
+      - Includes outstanding order metrics (weight_outstanding, quantity_outstanding, open_dollars)
+      - Joins inventory data from invoice records when available
+      
+      **Data Sources:**
+      - base_order_line: Order line item details
+      - base_order_header: Order header information
+      - base_invoice_line: Invoice line details
+      - stg_inventory: Inventory records
+      - stg_most_recent_order_status: Most recent order status
+      - base_open_orders: Outstanding order metrics
+      - last_shipped_status: Last shipment date information
+      - stg_salesperson: Salesperson details
+      
+      **Inventory Join Logic:**
+      The model joins inventory data from invoice records using `base_invoice.inventory_id = inventory.inventory_id`.
+      This ensures inventory information is available when an invoice exists with an associated inventory record.
+    columns:
+      - name: order_id
+        description: Unique identifier for the order.
+        quote: true
+        data_type: int64
+      - name: customer_id
+        description: Identifier for the customer placing the order.
+        quote: true
+        data_type: int64
+      - name: customer_po
+        description: Customer purchase order number.
+        quote: true
+        data_type: string
+      - name: order_number
+        description: Order number.
+        quote: true
+        data_type: int64
+      - name: shippment_method
+        description: The method of shipment for the order. This is a string value that can include various shipping methods such as 'FedEx', 'UPS', 'DHL', etc.
+        quote: true
+        data_type: string
+      - name: tax_state
+        description: Tax state code applicable to the order.
+        quote: true
+        data_type: string
+      - name: ship_to_company_name
+        description: Name of the company at the shipping destination.
+        quote: true
+        data_type: string
+      - name: ship_to_zip
+        description: Shipping destination ZIP code.
+        quote: true
+        data_type: string
+      - name: ship_to_city
+        description: City for the shipping destination.
+        quote: true
+        data_type: string
+      - name: ship_to_state
+        description: State for the shipping destination.
+        quote: true
+        data_type: string
+      - name: ship_to_contact
+        description: Formatted contact name at the shipping destination.
+        quote: true
+        data_type: string
+      - name: order_date
+        description: Date the order was placed.
+        quote: true
+        data_type: date
+      - name: quote_date
+        description: Date the quote was generated.
+        quote: true
+        data_type: date
+      - name: order_due_date
+        description: Due date for the order.
+        quote: true
+        data_type: date
+      - name: has_spacer
+        description: Indicates whether the order includes spacers.
+        quote: true
+        data_type: boolean
+      - name: has_forklift
+        description: Indicates whether a forklift is required for the order.
+        quote: true
+        data_type: boolean
+      - name: has_paper_wrap
+        description: Indicates whether the order requires paper wrapping.
+        quote: true
+        data_type: boolean
+      - name: primary_sales_person_id
+        description: The unique identifier for the primary salesperson associated with the order. This is a foreign key that links to the salesperson table.
+        data_type: int64
+        quote: true
+      - name: secondary_sales_person_id
+        description: The unique identifier for the secondary salesperson associated with the order, if applicable. This is a foreign key that links to the salesperson table.
+        data_type: int64
+        quote: true
+      - name: primary_sales_person_username
+        description: The username of the primary salesperson associated with the order. This is pulled from the salesperson table.
+        data_type: string
+        quote: true
+      - name: secondary_sales_person_username
+        description: The username of the secondary sales person associated with the order. This is a string value.
+        data_type: string
+        quote: true
+      - name: item_id
+        description: The unique identifier for the item in the order. This is an integer value.
+        data_type: int64
+        quote: true
+      - name: order_line_id
+        description: The unique identifier for the order line. This is an integer value.
+        data_type: int64
+        quote: true
+      - name: invoice_id
+        description: The unique identifier for each invoice. This is a primary key in the base_invoice table and is used to join with other tables.
+        data_type: int64
+        quote: true
+      - name: invoice_line_id
+        description: The unique identifier for each line item in an invoice. This is a primary key in the base_invoice_line table and is used to join with other tables.
+        data_type: int64
+        quote: true
+      - name: order_line_number
+        description: The line number of each item in an order. This is used to identify individual items within a single order.
+        data_type: int64
+        quote: true
+      - name: order_number_line
+        description: A string that concatenates the order number and the order line number, separated by a hyphen. This provides a unique identifier for each line item within an order.
+        data_type: string
+        quote: true
+      - name: item_id_width
+        description: Composite key combining item_id and width, formatted as 'item_id-width'. If width is null, contains just the item_id as a string. This is used for joining with item master and inventory tables.
+        data_type: string
+        quote: true
+      - name: invoice_number
+        description: The invoice number associated with the order line. This is pulled from the invoice header table and provides a reference to the invoice document.
+        data_type: string
+        quote: true
+      - name: price
+        description: The price of the item in the order line. This is a numeric value that represents the cost per unit of the item.
+        data_type: numeric
+        quote: true
+      - name: order_qty
+        description: The quantity of the item ordered. This is a numeric value that represents the number of units of the item that were ordered.
+        data_type: numeric
+        quote: true
+      - name: order_weight
+        description: The weight of the item in the order line. This is a numeric value that represents the weight of the item in the order line in the unit of measurement used by the company.
+        data_type: numeric
+        quote: true
+      - name: invoice_weight
+        description: The weight of the item as recorded on the invoice. This may differ from the order weight due to actual shipping weights.
+        data_type: numeric
+        quote: true
+      - name: net_weight
+        description: The net weight of the item in the order line. This is a numeric value that represents the weight of the item in the order line after subtracting any packaging or container weight.
+        data_type: numeric
+        quote: true
+      - name: gross_weight
+        description: The gross weight of the item in the order line. This is a numeric value that represents the total weight of the item in the order line including any packaging or container weight.
+        data_type: numeric
+        quote: true
+      - name: length
+        description: The length of the item ordered. This is a numeric value representing the length in the unit of measurement used by the company.
+        data_type: numeric
+        quote: true
+      - name: width
+        description: The width of the item ordered. This is a numeric value representing the width in the unit of measurement used by the company.
+        data_type: numeric
+        quote: true
+      - name: order_pieces_amount
+        description: The total number of pieces ordered for a particular item on the order line. This is the original ordered quantity from the order line.
+        data_type: numeric
+        quote: true
+      - name: invoiced_pieces_amount
+        description: The total number of pieces invoiced for a particular item. This represents the actual quantity that was invoiced, which may differ from the ordered quantity.
+        data_type: numeric
+        quote: true
+      - name: tax_amount
+        description: The tax amount column represents the total tax applied to the order. It is calculated based on the tax rate applicable to the order's shipping location and the taxable amount of the order. The data type is numeric.
+        data_type: numeric
+        quote: true
+      - name: cost_amount
+        description: The cost amount column represents the total cost of the items in the order. This is calculated based on the cost of each item multiplied by the quantity ordered. The data type is numeric.
+        data_type: numeric
+        quote: true
+      - name: sale_amount
+        description: The sale amount column represents the total sale value of the order. This is calculated based on the sale price of each item multiplied by the quantity ordered. The data type is numeric.
+        data_type: numeric
+        quote: true
+      - name: invoice_amount
+        description: This column represents the total amount of the invoice. It is calculated by summing up the cost of all items in the invoice, including taxes and any additional charges.
+        data_type: numeric
+        quote: true
+      - name: invoice_taxable_amount
+        description: This column represents the total amount of the invoice that is subject to tax. It is calculated by summing up the cost of all taxable items in the invoice.
+        data_type: numeric
+        quote: true
+      - name: inventory_cost
+        description: |
+          This column represents the cost of the inventory item. It is calculated based on the purchase price of the item and any additional costs associated with acquiring and storing the item.
+          
+          **Conditional Logic**: The cost comes from either:
+          - Invoice inventory record (when base_invoice.inventory_id is not null)
+          - Finished item inventory record (when no invoice inventory exists)
+        data_type: numeric
+        quote: true
+      - name: gauge_max
+        description: The maximum gauge of the item in the order. Gauge is a measurement used to identify the thickness of a metal sheet. The higher the gauge, the thinner the metal.
+        data_type: numeric
+        quote: true
+      - name: gauge_min
+        description: The minimum gauge of the item in the order. Gauge is a measurement used to identify the thickness of a metal sheet. The lower the gauge, the thicker the metal.
+        data_type: numeric
+        quote: true
+      - name: thickness
+        description: The thickness of the item in the order. This is measured in millimeters and is a direct measurement, unlike the gauge which is a relative measurement.
+        data_type: numeric
+        quote: true
+      - name: item_number
+        description: |
+          The unique identifier for each item in the inventory. This is a string value that is used to track and manage items in the inventory system.
+          
+          **Conditional Logic**: The item number comes from either:
+          - Invoice inventory record (when base_invoice.inventory_id is not null)
+          - Finished item inventory record (when no invoice inventory exists)
+        data_type: string
+        quote: true
+      - name: inventory_tag
+        description: |
+          The tag associated with each item in the inventory. This is a string value that is used for categorizing and organizing inventory items.
+          
+          **Conditional Logic**: The inventory tag comes from either:
+          - Invoice inventory record (when base_invoice.inventory_id is not null)
+          - Finished item inventory record (when no invoice inventory exists)
+        data_type: string
+        quote: true
+      - name: status_code
+        description: |
+          The status code of the order. This is a string value that represents the current status of the order and maps to a specific lifecycle state.
+
+          In this model, the logic only uses the following status codes:
+          - 1 = Or (Ordered)
+          - 2 = Prod (Produced)
+          - 6 = Pick (Pick)
+          - 7 = Load (Load)
+          - 13 = Queue (Queued)
+          - 14 = Process (Processed)
+          - 15 = Sch (Scheduled)
+          - 16 = Trans (Transferred)
+          - 9 = Credit (Credited)
+        data_type: string
+        quote: true
+      - name: status_description
+        description: This column contains the description of the current status of the order. It is derived from the 'stg_most_recent_order_status' table.
+        data_type: string
+        quote: true
+      - name: invoiced_description
+        description: The description of the item as it appears on the invoice. This may differ from the order line description.
+        data_type: string
+        quote: true
+      - name: location_name
+        description: The name of the warehouse location where the inventory item is stored. This comes from the inventory record associated with the invoice.
+        data_type: string
+        quote: true
+      - name: invoice_date
+        description: This column contains the date when the invoice was generated. It is derived from the 'base_invoice' table.
+        data_type: date
+        quote: true
+      - name: invoice_posted_date
+        description: This column contains the date when the invoice was posted. It is derived from the 'base_invoice' table.
+        data_type: date
+        quote: true
+      - name: transaction_date
+        description: The date when the transaction was made. This is a date field and can be used to track the timeline of transactions.
+        data_type: date
+        quote: true
+      - name: has_credit_release
+        description: A boolean field indicating whether the order has a credit release. If true, it means that the order has a credit release, otherwise it does not.
+        data_type: boolean
+        quote: true
+      - name: is_open_order
+        description: A boolean field indicating whether the order is still open. If true, it means that the order is still open and not yet completed, otherwise it is closed or completed.
+        data_type: boolean
+        quote: true
+      - name: is_order_complete
+        description: A boolean field indicating whether the order is complete. If the value is true, the order is complete. If the value is false, the order is not complete.
+        data_type: boolean
+        quote: true
+      - name: is_credited_order
+        description: A boolean field indicating whether the order has been credited. If the value is true, the order has been credited. If the value is false, the order has not been credited.
+        data_type: boolean
+        quote: true
+      - name: has_invoice
+        description: A boolean field indicating whether the order has an associated invoice. If the value is true, the order has an invoice. If the value is false, the order does not have an invoice.
+        data_type: boolean
+        quote: true
+      - name: production_order_finished_id
+        description: |
+          The unique identifier for the finished goods production order associated with this order line. This field links the order line to the production process that created the finished goods.
+          
+          **Conditional Logic**: This field comes from the `finshed_items` table and is only populated when there is a corresponding finished goods record for the order line. This creates a connection between customer orders and the production activities that fulfill them.
+        data_type: int64
+        quote: true
+      - name: weight_outstanding
+        description: This column represents the outstanding weight of the order. It is calculated as the difference between the total weight of the order and the weight of the order that has been fulfilled.
+        data_type: numeric
+        quote: true
+      - name: quantity_outstanding
+        description: This column represents the outstanding quantity of the order. It is calculated as the difference between the total quantity of the order and the quantity of the order that has been fulfilled.
+        data_type: int64
+        quote: true
+      - name: open_dollars
+        description: This column represents the outstanding dollar amount of the order. It is calculated as the difference between the total dollar amount of the order and the dollar amount of the order that has been fulfilled.
+        data_type: numeric
+        quote: true
+      - name: receiving_hours
+        description: The hours during which the shipment can be received. This is a string field and can contain any valid string value.
+        data_type: string
+        quote: true
+      - name: max_skid_weight
+        description: The maximum weight that a skid can carry. This is an integer field and can contain any valid integer value.
+        data_type: int64
+        quote: true
+      - name: printed_comment
+        description: Any comments or notes that are printed on the order. This is a string field and can contain any valid string value.
+        data_type: string
+        quote: true
+      - name: status_date
+        description: The date of the most recent status update for the order line. This is derived from the stg_most_recent_order_status table and represents when the order line's status was last updated.
+        data_type: date
+        quote: true
+      - name: days_since_status_date
+        description: The number of days between the current date and the most recent status date. This calculated field helps track how long an order has been in its current status, useful for order aging analysis and identifying orders that may need attention.
+        data_type: int64
+        quote: true
+      - name: last_shipped_date
+        description: The date when the order line was last shipped. This is derived from the last_shipped_status table and represents the most recent shipment date for the order line.
+        data_type: date
+        quote: true
+      - name: is_blanket_order
+        description: A boolean field indicating whether the order is a blanket order. Blanket orders are standing orders that allow for multiple releases over time.
+        data_type: boolean
+        quote: true
+      - name: is_late_order
+        description: |
+          A boolean field indicating whether the order is considered late. An order is considered late if:
+          - For "Will Call" orders: when the inventory receiving date is after the order due date
+          - For other shipment methods: when the last shipped date is after the order due date, or when there's no shipped date and the current date is past the due date for incomplete orders
+        data_type: boolean
+        quote: true
+      - name: short_ship_order
+        description: A boolean field indicating whether the order was short-shipped. An order is short-shipped when the invoiced pieces amount is less than the ordered pieces amount. Only calculated when an invoice exists with valid piece counts.
+        data_type: boolean
+        quote: true
+      - name: over_ship_order
+        description: A boolean field indicating whether the order was over-shipped. An order is over-shipped when the invoiced pieces amount is greater than the ordered pieces amount. Only calculated when an invoice exists with valid piece counts.
+        data_type: boolean
+        quote: true
+
+  - name: stg_item_master
+    description: |
+      Staging model for item master data that combines base item information with type, grade, and category lookups.
+      Includes derived columns for material classification and gauge extraction.
+    columns:
+      - name: item_id_width
+        description: Composite key combining item_id and width, formatted as 'item_id-width'. If width is null, contains just the item_id as a string.
+        data_type: string
+      - name: item_id
+        description: Unique identifier for each item.
+        data_type: int64
+      - name: product_code
+        description: The product code associated with the item.
+        data_type: string
+      - name: item_category
+        description: The category of the item.
+        data_type: string
+      - name: type_description
+        description: The type description of the item (trimmed).
+        data_type: string
+      - name: type_description_fixed
+        description: |
+          Normalized version of type_description that consolidates similar type descriptions:
+          - Any type containing 'STAINLESS' is mapped to 'STAINLESS STEEL'
+          - Any type containing 'HOT ROLLED' is mapped to 'HOT ROLLED'
+          - All other types retain their original type_description value
+        data_type: string
+      - name: item_grade
+        description: The grade of the item.
+        data_type: string
+      - name: item_name
+        description: The name of the item.
+        data_type: string
+      - name: item_description
+        description: A detailed description of the item.
+        data_type: string
+      - name: item_density
+        description: The density of the item material.
+        data_type: numeric
+      - name: standard_cost
+        description: The standard cost of the item.
+        data_type: numeric
+      - name: avg_inventory_cost_per_100_weight
+        description: |
+          The average inventory cost per 100 lbs (CWT) for this item, calculated from inventory records received within the last year.
+          
+          **Calculation Logic:**
+          - Includes inventory items where is_in_inventory = true
+          - Includes items received within the last year
+          - Includes coils (length = 0) OR sheets with standard widths (48, 60, 78 inches where length > 0)
+          - Averaged by item_id_width and rounded to 2 decimal places
+        data_type: numeric
+      - name: avg_inventory_cost_per_pound
+        description: |
+          The average inventory cost per pound for this item, derived from avg_inventory_cost_per_100_weight / 100.
+          
+          **Calculation Logic:**
+          - Based on the same inventory filtering as avg_inventory_cost_per_100_weight
+          - Includes coils (length = 0) OR sheets with standard widths (48, 60, 78 inches where length > 0)
+          - Rounded to 2 decimal places
+        data_type: numeric
+      - name: width
+        description: The width of the item from inventory or orders.
+        data_type: numeric
+      - name: item_create_date
+        description: The date the item was created.
+        data_type: date
+      - name: material_type
+        description: |
+          Categorizes items into material types based on type_description:
+          - 'Copper' for COPPER items
+          - 'Aluminum' for ALUMINUM items
+          - 'Steel' for COLD ROLLED, ALUMINIZED, GALVANIZED, GALVANNEALED, HOT ROLLED, HOT ROLLED BLACK, HOT ROLLED P&O, STAINLESS, STAINLESS STEEL items
+          - 'Other' for all other items
+        data_type: string
+      - name: item_gauge
+        description: |
+          The gauge of the item extracted from the product_code using regex:
+          - For Steel: extracts patterns like '20G', '1/4', or plain numbers
+          - For Copper/Aluminum: extracts decimal patterns like '.032'
+          - Returns 'Other' for unmatched patterns
+        data_type: string
+      - name: item_gauge_numeric
+        description: The numeric gauge value for Copper and Aluminum items, cast as decimal from the extracted gauge pattern. Null for Steel and Other material types.
+        data_type: numeric
+
+  - name: stg_po
+    description: |
+      Staging model for purchase orders that joins purchase order header, line, and RW purchase order data. 
+      Provides a denormalized view of purchase orders with item details, pricing, dimensions, 
+      shipping requirements, delivery dates, and open amounts.
+      
+      **Data Source Dependencies:**
+      - base_po_header: Purchase order header information
+      - base_po_line: Purchase order line item details
+      - base_rw_po: RW Purchase Orders view for open_amount (joined on po_line_id)
+      - stg_vendor: Vendor information
+    columns:
+      # Primary keys
+      - name: po_head_id
+        description: Unique identifier for the purchase order header.
+        data_type: int64
+      - name: po_line_id
+        description: Unique identifier for the purchase order line.
+        data_type: int64
+
+      # Foreign keys
+      - name: item_id
+        description: Foreign key to the item master.
+        data_type: int64
+      - name: customer_id
+        description: Foreign key to the customer associated with the purchase order line.
+        data_type: int64
+      - name: vendor_id
+        description: Foreign key to the vendor.
+        data_type: int64
+      - name: vendor_part_number_id
+        description: Foreign key to the vendor part number.
+        data_type: int64
+      - name: item_id_width
+        description: Composite key combining item_id and width, formatted as 'item_id-width'. Used for joining with item master data.
+        data_type: string
+
+      # PO info
+      - name: po_number
+        description: Purchase order number.
+        data_type: string
+      - name: rfq_number
+        description: Request for quote number.
+        data_type: string
+      - name: reference
+        description: Reference information for the purchase order.
+        data_type: string
+      - name: reference_buyer_name
+        description: Buyer name extracted from the reference field using regex pattern matching.
+        data_type: string
+      - name: buyer
+        description: Name of the buyer for the purchase order.
+        data_type: string
+      - name: terms
+        description: Payment terms description.
+        data_type: string
+      - name: ship
+        description: Shipping method or carrier.
+        data_type: string
+      - name: country_code
+        description: Country code for the purchase order.
+        data_type: string
+      - name: vendor_name
+        description: Name of the vendor from the stg_vendor table.
+        data_type: string
+
+      # Pricing and freight
+      - name: frt_amt
+        description: Freight amount for the purchase order line.
+        data_type: numeric
+      - name: frt_cwt
+        description: Freight cost per hundredweight (CWT).
+        data_type: numeric
+      - name: flat_frt_amt
+        description: Flat freight amount for the purchase order.
+        data_type: numeric
+
+      # Dates
+      - name: po_date
+        description: Date the purchase order was created.
+        data_type: date
+      - name: due_date
+        description: The date the material is expected to ship from the vendor.
+        data_type: date
+      - name: promise_date
+        description: The date the material is expected to arrive at the warehouse.
+        data_type: date
+
+      # Comments
+      - name: po_comment
+        description: General comments for the purchase order.
+        data_type: string
+
+      # Descriptive attributes
+      - name: description
+        description: Description of the item on the purchase order line.
+        data_type: string
+      - name: unit_of_measure
+        description: Unit of measure for the item.
+        data_type: string
+      - name: mill
+        description: Mill or manufacturer of the material.
+        data_type: string
+      - name: chemistry
+        description: Chemical composition or grade of the material.
+        data_type: string
+      - name: country_of_melt_and_pour
+        description: Country where the material was melted and poured.
+        data_type: string
+      - name: importer_of_record
+        description: Name of the importer of record for the material.
+        data_type: string
+      - name: vendor_tag_num
+        description: Vendor's tag or reference number for the material.
+        data_type: string
+
+      # Dimensions
+      - name: thickness
+        description: Thickness of the material.
+        data_type: numeric
+      - name: gauge_max
+        description: Maximum gauge specification for the material.
+        data_type: numeric
+      - name: gauge_min
+        description: Minimum gauge specification for the material.
+        data_type: numeric
+      - name: width
+        description: Width of the material.
+        data_type: numeric
+      - name: width_1
+        description: Secondary width specification.
+        data_type: numeric
+      - name: length
+        description: Length of the material.
+        data_type: numeric
+      - name: length_1
+        description: Secondary length specification.
+        data_type: numeric
+      - name: feet
+        description: Total feet of material on the purchase order line.
+        data_type: numeric
+
+      # Quantities
+      - name: pieces
+        description: Number of pieces on the purchase order line.
+        data_type: int64
+      - name: weight
+        description: Total weight of the material.
+        data_type: numeric
+
+
+      # Pricing
+      - name: price
+        description: Unit price for the material.
+        data_type: numeric
+      - name: amount
+        description: Total dollar amount for the purchase order line.
+        data_type: numeric
+      - name: open_amount
+        description: Open dollar amount remaining on the purchase order line. Sourced from base_rw_po via po_line_id join.
+        data_type: numeric
+
+      # Flags
+      - name: received
+        description: Flag indicating if the material has been received.
+        data_type: boolean
+      - name: paperwrap
+        description: Flag indicating if paper wrap is required.
+        data_type: boolean
+      - name: spacers
+        description: Flag indicating if spacers are required.
+        data_type: boolean
+      - name: fork_lift
+        description: Flag indicating if forklift unloading is required.
+        data_type: boolean
+      - name: rear_unload
+        description: Flag indicating if rear unloading is required.
+        data_type: boolean
+      - name: side_unload
+        description: Flag indicating if side unloading is required.
+        data_type: boolean
+      - name: hide_width_length
+        description: Flag to hide width and length on documentation.
+        data_type: boolean
+      - name: flaws_00
+        description: Flag indicating flaws or quality issues.
+        data_type: boolean
+
+      # Line comments
+      - name: line_comment
+        description: General comments for the purchase order line.
+        data_type: string
+      - name: line_comment_np
+        description: Non-printable comments for internal use.
+        data_type: string
+      - name: line_comment_sales
+        description: Sales-related comments for the purchase order line.
+        data_type: string
+      - name: line_comment_receiving
+        description: Receiving-related comments for the purchase order line.
+        data_type: string
+      - name: line_misc_info
+        description: Miscellaneous information for the purchase order line.
+        data_type: string
+
+  - name: stg_supplies_po
+    description: |
+      Staging model for supplies purchase orders. Enriches base_supplies_po with vendor_id from stg_vendor
+      and calculated fields for total_price and estimated_due_date.
+    columns:
+      - name: supplies_po_line_id
+        description: Unique identifier for the supplies purchase order line.
+      - name: po_number
+        description: Purchase order number for the supplies order.
+      - name: part_number
+        description: Part number for the supply item.
+      - name: vendor_part_number
+        description: Vendor's part number for the supply item.
+      - name: vendor_name
+        description: Name of the vendor supplying the item.
+      - name: vendor_description
+        description: Vendor's description of the item.
+      - name: description
+        description: Description of the supply item.
+      - name: order_qty
+        description: Quantity ordered.
+      - name: u_m
+        description: Unit of measure for the order quantity.
+      - name: pkg_qty
+        description: Package quantity.
+      - name: price
+        description: Price per unit for the supply item.
+      - name: inserted_at
+        description: Timestamp when the record was inserted.
+      - name: promise_date
+        description: Promised delivery date from the vendor.
+      - name: vendor_id
+        description: Foreign key to the vendor. Populated via join on vendor_name with stg_vendor.
+      - name: total_price
+        description: Extended price calculated as order_qty multiplied by price.
+      - name: estimated_due_date
+        description: Estimated due date calculated as inserted_at plus 30 days.
