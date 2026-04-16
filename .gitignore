@@ -1,6 +1,0 @@
-
-.cursor/
-
-src/qmi_etl/datawarehouse_2/target/
-
-tests/__pycache__/

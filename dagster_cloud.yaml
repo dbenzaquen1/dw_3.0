@@ -1,5 +1,0 @@
-locations:
-  - location_name: Data Warehouse 2.0
-    code_source:
-      module_name: qmi_etl.definitions
-    working_directory: ./src/
